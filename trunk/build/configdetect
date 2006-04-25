@@ -1,0 +1,88 @@
+#-------------------------------------------------------------------------------
+# Detect which config file we need to use
+#-------------------------------------------------------------------------------
+
+# Set the Default to Linux
+CONFIG_FILE="build.generic"
+
+# Get Config
+OSNAME=`uname -s`
+OSRELEASE=`uname -r`
+OSMACHINE=`uname -m`
+
+if [ -f config.local ] ; then
+	CONFIG_FILE="config.local"
+elif [ $OSNAME = "Linux" ] ; then
+	if [ $OSMACHINE = "x86_64" ] ; then
+	  CONFIG_FILE="build/config.linux_x86_64"
+	else
+  	CONFIG_FILE="build/config.linux"
+  fi
+elif [ $OSNAME = "CYGWIN_NT-5.0"] ; then 
+  CONFIG_FILE="build/config.cygwin"
+elif [ $OSNAME = "HP-UX" ] && [ -f build/config.hpux ] ; then
+	CONFIG_FILE="build/config.hpux"
+elif [ $OSNAME = "SunOS" ] && [ -f build/config.solaris ] ; then
+	CONFIG_FILE="build/config.solaris"
+elif [ $OSNAME = "IRIX64" ] && [ -f build/config.irix ] ; then
+	CONFIG_FILE="build/config.irix"
+fi
+
+# Override from Environment
+if [ $GB_CONFIG_FILE ] && [ -f $GB_CONFIG_FILE ] ; then
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+	echo -e " Build Config (Auto Detect)      : \033[34m$CONFIG_FILE\033[0m"
+	echo -e " Build Config (From Environment) : \033[34m$GB_CONFIG_FILE\033[0m"
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+	CONFIG_FILE="$GB_CONFIG_FILE"
+fi
+
+# Turn on optimizations by default
+export DEFS="-DNDEBUG"
+
+# Parse Arguments so we can override settings in our build file
+for arg in $*; do
+    case $arg in
+        --use-config=*)
+            CONFIG_FILE=`echo "${arg}" | cut -d= -f2`
+            if [ ! -f $CONFIG_FILE ] ; then
+                echo " Error: ${CONFIG_FILE} doesn't exist."
+                exit -1
+            fi
+            ;;
+        --enable-debug)
+        		export DEFS="-DDEBUG"
+        		;;
+        --disable-release)
+        		export DEFS=""
+        		;;
+    esac
+done
+#-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

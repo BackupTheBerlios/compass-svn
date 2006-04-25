@@ -1,0 +1,45 @@
+#-------------------------------------------------------------------------------
+# Make a package
+#-------------------------------------------------------------------------------
+
+# Remove Build Files
+rm -f build/checkbyteorder
+
+echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+echo "              M A K E  P A C K A G E                       "
+echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+
+cd ..
+
+# Create Distribution Directory
+echo " Create Distribution Directory..."
+cp -R $PACKAGE_NAME $PACKAGE_NAME-$PACKAGE_VERSION
+
+# Create Exclude File
+echo "$PACKAGE_NAME-$PACKAGE_VERSION/exclude" > $PACKAGE_NAME-$PACKAGE_VERSION/exclude
+find $PACKAGE_NAME-$PACKAGE_VERSION -name CVS >> $PACKAGE_NAME-$PACKAGE_VERSION/exclude
+
+# Create the Zip File
+echo " Create ${PACKAGE_NAME}-${PACKAGE_VERSION}.tar.bz2"
+tar cjfX ${PACKAGE_NAME}-${PACKAGE_VERSION}.tar.bz2 $PACKAGE_NAME-$PACKAGE_VERSION/exclude $PACKAGE_NAME-$PACKAGE_VERSION
+
+rm -R ${PACKAGE_NAME}-${PACKAGE_VERSION}
+
+cd ${PACKAGE_NAME}
+echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

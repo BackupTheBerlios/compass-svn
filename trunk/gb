@@ -1,0 +1,255 @@
+#!/bin/bash
+#-----------------------------------------------------------
+# GOGGLES BUILD SYSTEM - 0.5.0
+#-----------------------------------------------------------
+#
+# Goggles Build System consists of:
+#
+#   gb.depend   Check for library dependencies
+#   gb.install  Install all components
+#   gb.make     The actual make file
+#   gb.version  Package Related information
+#
+#-----------------------------------------------------------
+
+#Setup Package Name and Version
+. gb.version
+
+
+# add_library
+checkLIB()
+{
+	if [ -f $1/$LIBPREFIX$2$DLLEXT ] ; then
+    echo -e " Check $3 Library   : \033[32mFOUND\033[0m"
+ 	elif [ -f $1/$LIBPREFIX$2$LIBEXT ] ; then
+    echo -e " Check $3 Library   : \033[32mFOUND\033[0m"
+	else
+    echo -e " Check $3 Library   : \033[31mNot Found\033[0m"
+		return 0
+	fi
+	return 1
+}
+
+appendLIB() 
+{
+	if [ -f $1/$LIBPREFIX$2$DLLEXT ] ; then
+		LIBS="${LIBS} ${LIBSEARCHPATH}$1 ${LIBPREFIX}$2${DLLEXT}
+ 	elif [ -f $1/$LIBPREFIX$2$LIBEXT ] ; then
+		LIBS="${LIBS} ${LIBSEARCHPATH}$1 ${LIBPREFIX}$2${LINEXT}
+	fi
+}
+
+
+
+
+PACKAGE_VERSION="${PACKAGE_MAJOR_VERSION}.${PACKAGE_MINOR_VERSION}.${PACKAGE_PATCH_VERSION}"
+PACKAGE_PREFIX="/usr"
+
+# Check if this a game
+if [ $PACKAGE_GAME -eq 1 ] ; then
+  GAMEDIR="games"
+else
+  GAMEDIR=""
+fi
+
+INSTALL_PREFIX=""
+SHOWHELP=0
+
+# Check Cached command
+if [ -f gb.cache ] ; then
+	if [ -z $@ ] ; then
+		echo -e " Using cache.... "
+		. gb.cache
+	else
+		rm -f gb.cache
+	fi
+fi
+
+#Check where we want to install
+for arg in $*; do
+    case $arg in
+        --prefix=*)
+            PACKAGE_PREFIX=`echo "${arg}" | cut -d= -f2`
+            ;;
+        --package-root=*)
+        		INSTALL_PREFIX=`echo "${arg}" | cut -d= -f2`
+        		;;
+        --no-gamedir)
+            if [ $PACKAGE_GAME -eq 1 ] ; then
+              GAMEDIR=""
+            fi
+            ;;
+    esac
+done
+
+#Detect which config file we need to use
+. build/configdetect
+
+#Which Make and Install?
+MAKE=${MAKE:-make}
+INSTALL=${INSTALL:-install}
+
+#Get the settings
+. "$CONFIG_FILE"
+
+function print_help() {
+	SHOWHELP=1
+	echo "Options:"
+	echo " "
+	echo -e "  \033[32m$0\033[0m       	   \033[1mBuild ${PACKAGE_NAME}\033[0m"
+	echo -e "  \033[32m$0 install\033[0m 	   \033[1mInstall ${PACKAGE_NAME}\033[0m"
+	echo -e "  \033[32m$0 help\033[0m  	   \033[1mShow this help page.\033[0m"
+	echo -e "  \033[32m$0 clean\033[0m  	   \033[1mRemove object files.\033[0m"
+	echo -e "  \033[32m$0 rebuild\033[0m     \033[1mClean and then build.\033[0m"
+	echo " "
+	echo "Build Options (./gb):"
+	echo " "
+	echo -e "  \033[32m--use-config=<c>\033[0m      \033[1mConfiguration File\033[0m"
+	echo -e "  \033[32m--enable-debug\033[0m      \033[1mEnable Debug\033[0m"
+	echo -e "  \033[32m--enable-release\033[0m       \033[1mEnable Release\033[0m"
+	. gb.depend
+	echo " "
+	echo "Install Options (./gb install):"
+	echo -e "  \033[32m--prefix=<p>\033[0m          \033[1mInstallation Prefix.\033[0m"
+	echo -e "  \033[32m--package-root=<p>\033[0m    \033[1mUsed for package building.\033[0m"
+  if [ $PACKAGE_GAME -eq 1 ] ; then
+	  echo -e "  \033[32m--no-gamedir\033[0m          \033[1mDo not install in the special games folder.\033[0m"
+	fi
+	echo " "
+	echo " "
+	echo "Environment Variables:"
+	echo " "
+	echo -e "  \033[32mGB_CONFIG_FILE=<c>\033[0m    \033[1mConfiguration File\033[0m"
+	exit 0
+}
+
+# Parse arguments to see what we need to do
+for arg in $*; do
+    case $arg in
+		'install')
+      ${MAKE} -q -f gb.make
+      if [ "$?" -ne "0" ] ; then
+        cd ..
+        echo "${PACKAGE_NAME} was not build or not up2date. Please build ${PACKAGE_NAME} using '$0' first."
+        exit 1
+      else
+
+      	# Define Target Directories
+     		INSTALL_DIR=${INSTALL_PREFIX:-$PACKAGE_PREFIX}
+				BIN_DIR=${INSTALL_DIR}${GAMEDIR:-/bin}
+				LIB_DIR=${INSTALL_DIR}/lib
+				LIB_PACKAGE_DIR=${INSTALL_DIR}/lib${GAMEDIR}/${PACKAGE_NAME}
+				DATA_DIR=${INSTALL_DIR}/share${GAMEDIR}/${PACKAGE_NAME}
+
+      	# Run Install Script
+      	. gb.install
+
+      fi
+			exit 0
+			;;
+		'rebuild')
+			${MAKE} -f gb.make clean
+			;;
+
+		'clean')
+      ${MAKE} -f gb.make clean
+			exit 0
+			;;
+
+		'dist')
+      ${MAKE} -f gb.make clean
+      . build/makepackage
+      exit 0
+      ;;
+
+    '-h')
+			print_help
+			;;
+    '--help')
+			print_help
+			;;
+    'help')
+			print_help
+    	;;
+    esac
+done
+
+# Export our settings
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+	echo -e "              \033[32mPackage\033[0m: \033[1m${PACKAGE_NAME}\033[0m"
+	echo -e "              \033[32mVersion\033[0m: \033[1m${PACKAGE_VERSION}\033[0m"
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+	echo -e "              \033[32mOS Name\033[0m: \033[1m$OSNAME\033[0m"
+	echo -e "           \033[32mOS Release\033[0m: \033[1m$OSRELEASE\033[0m"
+	echo -e "           \033[32mOS Machine\033[0m: \033[1m$OSMACHINE\033[0m"
+	echo " "
+	echo -e "         \033[32mBuild Config\033[0m: \033[1m$CONFIG_FILE\033[0m"
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+  . build/byteorderdetect
+	. gb.depend
+	. build/makeversion
+	. build/makeicons
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+	echo -e "           \033[32mC Compiler\033[0m: \033[1m$CC\033[0m"
+	echo -e "         \033[32mC++ Compiler\033[0m: \033[1m$CXX\033[0m"
+	echo -e "    \033[32mExecutable Linker\033[0m: \033[1m$LINK\033[0m"
+	echo -e "   \033[32mPreprocessor Flags\033[0m: \033[1m$CPPFLAGS\033[0m"
+	echo -e "     \033[32mC Compiler Flags\033[0m: \033[1m$CFLAGS\033[0m"
+	echo -e "   \033[32mC++ Compiler Flags\033[0m: \033[1m$CXXFLAGS\033[0m"
+	echo -e "              \033[32mDefines\033[0m: \033[1m$DEFS\033[0m"
+	echo -e "            \033[32mLibraries\033[0m: \033[1m$LIBS\033[0m"
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+
+# FIXME
+#if [ ! -f gb.cache ] ; then
+#	. build/makecache
+#fi
+
+
+# Did we already build?
+${MAKE} -q -f gb.make
+if [ "$?" -eq "0" ] ; then
+  echo "${PACKAGE_NAME} was succesfully build."
+  echo "Run $0 install to Install ${PACKAGE_NAME}"
+  exit 0
+fi
+
+# Not done yet
+${MAKE} -f gb.make
+if [ "$?" -ne "0" ] ; then
+  cd ..
+  echo "Failed to build ${PACKAGE_NAME}."
+  exit 1
+else
+  echo "${PACKAGE_NAME} was succesfully build."
+  echo "Run $0 install to Install ${PACKAGE_NAME}"
+  cd ..
+  exit 0
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

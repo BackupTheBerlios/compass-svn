@@ -1,0 +1,41 @@
+#----------------------------------------------------------------------------------------------------------------
+# Basic File extensions
+export BINEXT=".exe"                     # Executable Extension
+export LIBEXT=".lib"                   # Static Library Extension
+export DLLEXT=".dll"                  # Dynamic Library Extension
+export OBJEXT=".obj"                   # Object Extension
+export LIBPREFIX=""               # Standard Library Prefix
+export LIBDIR="lib"                  # Name of the library directory
+export DEFAULT_PREFIX="D:/cygwin/usr"
+
+# Compiler and Linker
+export CC="cl.exe"                       # C Compiler
+export CXX="cl.exe"                      # C++ Compiler
+export LINK="cl.exe                      # Executable Linker
+export DLLLINK=""                        # Dynamic Library Linker
+export LIBLINK="link.exe"                # Static Library Linker
+export DLLRPATH=""                       # Search Path for Dynamic Libs
+
+# Compiler and Linker Flags
+export OUTPUTOBJ="-Fo"                 # Compiler flag to specify output object filename
+export OUTPUTBIN="-Fe"                # Compiler flag to specify output executable filename
+export PICFLAG=""                     # Compiler flag to generate position independent code
+
+if [ $DEFS == "-DDEBUG" ] ; then
+  export CFLAGS="${CFLAGS:--W3 -Zi -GR}"
+	export CXXFLAGS="${CXXFLAGS:--W3 -Zi -GR}"
+	export LDFLAGS="-MTd"
+elif [ $DEFS == "-DNDEBUG" ] ; then
+	export CFLAGS="${CFLAGS:--W3 -O2  -GR}"
+	export CXXFLAGS="${CXXFLAGS:--W3 -O2 -GR}"
+	export LDFLAGS="-MT"
+else
+	export CFLAGS="${CFLAGS:--W3 -GR}"
+	export CXXFLAGS="${CXXFLAGS:--W3 -GR}"
+	export LDFLAGS="-MT"
+fi
+
+export CPPFLAGS="-I./include ${CPPFLAGS}"
+export LIBS=""
+export DEFS="${DEFS} -DWINDOWS"
+#----------------------------------------------------------------------------------------------------------------

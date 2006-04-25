@@ -1,0 +1,43 @@
+#-----------------------------------------------------------
+# GOGGLES BUILD SYSTEM
+#-----------------------------------------------------------
+#
+# Put the files you want to install here
+#
+# DATA_DIR = Location of data files
+# BIN_DIR = Location of binaries
+# LIB_DIR = Location of libraries
+# LIB_PACKAGE_DIR = Location of package libraries
+#
+# Note: Directories are not created yet.
+#-----------------------------------------------------------
+
+#mkdir -p ${DATA_DIR}
+#mkdir -p ${BIN_DIR}
+#mkdir -p ${LIB_DIR}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

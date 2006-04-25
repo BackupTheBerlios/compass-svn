@@ -1,0 +1,34 @@
+#-------------------------------------------------------------------------------
+# Make a version.h
+#-------------------------------------------------------------------------------
+sed "s|@TEMPLATE_MAJOR_VERSION@|$PACKAGE_MAJOR_VERSION|" include/version.h.in |
+sed "s|@TEMPLATE_MINOR_VERSION@|$PACKAGE_MINOR_VERSION|" |
+sed "s|@TEMPLATE_PATCH_VERSION@|$PACKAGE_PATCH_VERSION|" |
+sed "s|@TEMPLATE_VERSION@|$PACKAGE_VERSION|" > include/version.h 
+#-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

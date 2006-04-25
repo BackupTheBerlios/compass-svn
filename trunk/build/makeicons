@@ -1,0 +1,41 @@
+if [ -d icons ] ; then 
+  if [ ! -f src/icons.cpp ] ; then
+	  $RESWRAP -e -k -o src/icons.cpp icons/*
+  fi
+
+  if [ ! -f include/icons.h ] ; then
+	  $RESWRAP -i -k -o include/icons.h icons/*
+  fi
+fi   
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

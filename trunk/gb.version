@@ -1,0 +1,53 @@
+#-----------------------------------------------------------
+# GOGGLES BUILD SYSTEM
+#-----------------------------------------------------------
+#
+# Specify Package Name and Version
+#
+# PACKAGE_NAME="name"
+#
+# PACKAGE_GAME = [1 or 0]
+#
+# PACKAGE_MAJOR_VERSION	= Major Version
+# PACKAGE_MINOR_VERSION = Minor Version
+# PACKAGE_PATCH_VERSION = Patch Version
+#
+#-----------------------------------------------------------
+
+#Minimal FOX version, used by foxdetect
+MIN_FOX_MAJOR=1
+MIN_FOX_MINOR=6
+
+#Package Name
+export PACKAGE_NAME="compass"
+
+#Package Version
+PACKAGE_MAJOR_VERSION=0
+PACKAGE_MINOR_VERSION=5
+PACKAGE_PATCH_VERSION=2
+
+#Is this a game?
+PACKAGE_GAME=0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

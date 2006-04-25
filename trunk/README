@@ -1,0 +1,37 @@
+Features
+--------------------------------------------------------------
+
+ * Lightweight File Manager for X11 Desktops.
+ * Tabbed File Browsing.
+ * Copy, Cut & Paste compatible with GNOME and KDE.
+ * Drag and Drop Compatible with GNOME and KDE.
+ * Build-in image viewer for most common image file formats.
+ * Optional Directory Tree on the left side.
+ * Navigatable history of visited files and directories.
+ * Create new folders
+ * Change permissions on files and folders.
+ * Use dde to always use one process.
+
+
+Key Bindings
+--------------------------------------------------------------
+Ctrl-N    Open new window
+Ctrl-D    Open duplicate window
+Ctrl-T    Open new Tab
+Ctrl-Y    Open duplicate Tab
+Ctrl-W    Close current Tab
+Ctrl-Q    Close Window
+Ctrl-C    Copy file(s) to clipboard
+Ctrl-X    Cut file(s) to clipboard
+Ctrl-V    Paste file(s) from clipboard
+Ctrl-A    Select All Files
+Ctrl-F    Create New Folder
+Ctrl-R    Rename selected file(s) using expressions.
+Del       Delete selected file(s)
+F2        Rename selected file
+Backspace Go to Parent Directory
+Home      Go to Home Directory
+Page Up   Go Back in History
+Page Down Go Forward in History
+
+

@@ -1,0 +1,39 @@
+Installation Instructions
+-------------------------
+
+   1. Install all required dependencies: FOX-1.6.x
+
+   2.	Run the build script 'gb' to start compiling Compass.
+   		There are several command line options you may have to specify when running this script.
+   		For a complete overview of all options use:
+
+			>./gb --help
+
+      We assume that all required packages are installed in /usr. If thats not the case,
+      you can change the installation prefix for each package on the commandline:
+
+			>./gb --fox-prefix=/usr/local
+
+   3. If everything compiled fine, you are ready to install Compass in its final location.
+   		By default this will be in /usr. Using the --prefix option you can tell gb to install it somewhere else.
+
+			> su
+			> ./gb install [--prefix=/usr/local]
+
+   4. Run Compass
+
+			> compass
+
+
+
+Package Build Instructions
+--------------------------
+
+	To install Compass in a special package directory use the following option(s):
+
+		> ./gb --package-root=/packages/compass/usr --prefix=/usr install
+
+	Files will be installed in [package-root]/{bin,share...}, but the program will be configured to run from [prefix].
+
+
+
