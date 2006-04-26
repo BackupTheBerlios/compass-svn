@@ -70,8 +70,14 @@ void FXFileApplication::init(int& argc,char** argv,FXbool connect){
   /// Register SIGNAL handler
   addSignal(SIGCHLD,this,ID_CHILD);
 
+#if FOX_MINOR == 6
   previewopenmode = (FXOpenMode) reg().readUnsignedEntry("settings","preview-open-mode",OPEN_IN_CURRENT);
   diropenmode     = (FXOpenMode) reg().readUnsignedEntry("settings","directory-open-mode",OPEN_IN_CURRENT);
+#else
+  previewopenmode = (FXOpenMode) reg().readUIntEntry("settings","preview-open-mode",OPEN_IN_CURRENT);
+  diropenmode     = (FXOpenMode) reg().readUIntEntry("settings","directory-open-mode",OPEN_IN_CURRENT);
+#endif
+
   }
 
 

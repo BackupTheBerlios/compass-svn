@@ -24,7 +24,11 @@ FXIMPLEMENT(FXFileDictEx,FXFileDict,NULL,0);
 FXFileDictEx::FXFileDictEx(FXApp * app) : FXFileDict(app) {
   }
 
+#if FOX_MINOR == 6
 void *FXFileDictEx::createData(const void* ptr) {
+#else
+void *FXFileDictEx::createData(void* ptr) {
+#endif
   FXFileAssoc * assoc =  reinterpret_cast<FXFileAssoc*>(FXFileDict::createData(ptr));
 
   if (assoc->bigicon)

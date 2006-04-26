@@ -311,16 +311,30 @@ void FXFileProperties::setup(FXbool advanced){
     new FXSeparator(matrix,LAYOUT_FILL_X|SEPARATOR_GROOVE|LAYOUT_FILL_COLUMN);
 
     new FXLabel(matrix,"Modified",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y|JUSTIFY_RIGHT|LAYOUT_FILL_X);
+#if FOX_MINOR == 6
     new FXLabel(matrix,FXSystem::time(FXStat::modified(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#else
+    new FXLabel(matrix,FXSystem::localTime(FXStat::modified(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#endif
 
     new FXLabel(matrix,"Accessed",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y|JUSTIFY_RIGHT|LAYOUT_FILL_X);
+#if FOX_MINOR == 6
     new FXLabel(matrix,FXSystem::time(FXStat::accessed(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#else
+    new FXLabel(matrix,FXSystem::localTime(FXStat::accessed(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#endif
 
     new FXLabel(matrix,"Created",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y|JUSTIFY_RIGHT|LAYOUT_FILL_X);
+#if FOX_MINOR == 6
     new FXLabel(matrix,FXSystem::time(FXStat::created(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#else
+    new FXLabel(matrix,FXSystem::localTime(FXStat::created(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#endif
 
+#if FOX_MINOR == 6
     new FXLabel(matrix,"Touched",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y|JUSTIFY_RIGHT|LAYOUT_FILL_X);
     new FXLabel(matrix,FXSystem::time(FXStat::touched(files[0])),NULL,LABEL_NORMAL|JUSTIFY_LEFT|LAYOUT_FILL_COLUMN);
+#endif
 
     new FXSeparator(matrix,LAYOUT_FILL_X|SEPARATOR_GROOVE);
     new FXSeparator(matrix,LAYOUT_FILL_X|SEPARATOR_GROOVE|LAYOUT_FILL_COLUMN);

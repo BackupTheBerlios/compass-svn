@@ -158,6 +158,7 @@ bool FXFileView::previewShown() const {
 
 
 void FXFileView::saveSettings(const FXString & key) const {
+#if FOX_MINOR == 6
   FXuint style = filelist->getListStyle();
   if (style&ICONLIST_MINI_ICONS)
     getApp()->reg().writeUnsignedEntry(key.text(),"filelist-view-style",1);
@@ -172,10 +173,27 @@ void FXFileView::saveSettings(const FXString & key) const {
     getApp()->reg().writeUnsignedEntry(key.text(),"filelist-view-arrangement",0);
 
   getApp()->reg().writeUnsignedEntry(key.text(),"show-directory-tree",dirframe->shown());
+#else
+  FXuint style = filelist->getListStyle();
+  if (style&ICONLIST_MINI_ICONS)
+    getApp()->reg().writeUIntEntry(key.text(),"filelist-view-style",1);
+  else if (style&ICONLIST_BIG_ICONS)
+    getApp()->reg().writeUIntEntry(key.text(),"filelist-view-style",2);
+  else
+    getApp()->reg().writeUIntEntry(key.text(),"filelist-view-style",0);
+
+  if (style&ICONLIST_COLUMNS)
+    getApp()->reg().writeUIntEntry(key.text(),"filelist-view-arrangement",1);
+  else
+    getApp()->reg().writeUIntEntry(key.text(),"filelist-view-arrangement",0);
+
+  getApp()->reg().writeUIntEntry(key.text(),"show-directory-tree",dirframe->shown());
+#endif
   getApp()->reg().writeIntEntry(key.text(),"directory-tree-width",getSplit(0));
   }
 
 void FXFileView::loadSettings(const FXString & key) {
+#if FOX_MINOR == 6
   FXuint style = getApp()->reg().readUnsignedEntry(key.text(),"filelist-view-style",1);
   if (style==1)
     filelist->setListStyle(filelist->getListStyle()|ICONLIST_MINI_ICONS);
@@ -186,7 +204,17 @@ void FXFileView::loadSettings(const FXString & key) {
   if (arrangement==1)
     filelist->setListStyle(filelist->getListStyle()|ICONLIST_COLUMNS);
 
+#else
+  FXuint style = getApp()->reg().readUIntEntry(key.text(),"filelist-view-style",1);
+  if (style==1)
+    filelist->setListStyle(filelist->getListStyle()|ICONLIST_MINI_ICONS);
+  else if (style==2)
+    filelist->setListStyle(filelist->getListStyle()|ICONLIST_BIG_ICONS);
 
+  FXuint arrangement = getApp()->reg().readUIntEntry(key.text(),"filelist-view-arrangement",0);
+  if (arrangement==1)
+    filelist->setListStyle(filelist->getListStyle()|ICONLIST_COLUMNS);
+#endif
   setSplit(0,getApp()->reg().readIntEntry(key.text(),"directory-tree-width",100));
   if (getApp()->reg().readIntEntry(key.text(),"show-directory-tree",0)==0){
     dirframe->hide();

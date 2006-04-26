@@ -23,7 +23,12 @@ class FXFileDictEx : public FXFileDict {
   FXDECLARE(FXFileDictEx)
 protected:
   FXFileDictEx(){}
+
+#if FOX_MINOR == 6
   virtual void *createData(const void*);
+#else
+  virtual void *createData(void*);
+#endif
 private:
   FXFileDictEx(const FXFileDictEx&);
   FXFileDictEx &operator=(const FXFileDictEx&);

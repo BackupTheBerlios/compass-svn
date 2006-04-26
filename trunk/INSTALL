@@ -1,7 +1,7 @@
 Installation Instructions
 -------------------------
 
-   1. Install all required dependencies: FOX-1.6.x
+   1. Install all required dependencies: FOX-1.6.x or F0X 1.7.x
 
    2.	Run the build script 'gb' to start compiling Compass.
    		There are several command line options you may have to specify when running this script.
