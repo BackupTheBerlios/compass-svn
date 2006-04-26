@@ -1,7 +1,7 @@
 /*******************************************************************************
-*                              Process Viewer                                  *
+*                 Compass - Filemanager for the FOX Desktop                    *
 ********************************************************************************
-*            Copyright (C) 2005 Sander Jansen. All Rights Reserved             *
+*          Copyright (C) 2005-2006 Sander Jansen. All Rights Reserved          *
 *                               ---                                            *
 * This program is free software; you can redistribute it and/or modify         *
 * it under the terms of the GNU General Public License as published by         *
@@ -16,10 +16,6 @@
 * along with this program; if not, write to the Free Software                  *
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    *
 *******************************************************************************/
-/*
-$Id$
-*/
-
 #include "common.h"
 #include "FXCopyFiles.h"
 #include "FXMoveFiles.h"

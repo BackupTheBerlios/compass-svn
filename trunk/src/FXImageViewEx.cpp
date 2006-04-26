@@ -1,5 +1,5 @@
 /*******************************************************************************
-*                              Process Viewer                                  *
+*                 Compass - Filemanager for the FOX Desktop                    *
 ********************************************************************************
 *            Copyright (C) 2005 Sander Jansen. All Rights Reserved             *
 *                               ---                                            *
@@ -16,10 +16,6 @@
 * along with this program; if not, write to the Free Software                  *
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    *
 *******************************************************************************/
-/*
-$Id$
-*/
-
 #include <fx.h>
 #include "FXImageViewEx.h"
 
