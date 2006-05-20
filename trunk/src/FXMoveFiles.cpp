@@ -21,7 +21,7 @@
 #include "FXMoveFiles.h"
 
 
-FXMoveFiles::FXMoveFiles(FXObject * tgt,FXSelector sel,const FXStringList & f,const FXString & d) : FXCopyFiles(tgt,sel,f,d){
+FXMoveFiles::FXMoveFiles(FXObject * tgt,FXSelector sel,FXStringList & f,const FXString & d) : FXCopyFiles(tgt,sel,f,d){
   }
 
 FXbool FXMoveFiles::moveFiles(const FXString& srcfile,const FXString& dstfile){

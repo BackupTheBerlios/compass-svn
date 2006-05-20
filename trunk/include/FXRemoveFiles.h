@@ -31,7 +31,7 @@ protected:
   void queryDelete(const FXString &);
   FXbool remove(const FXString &);
 public:
-  FXRemoveFiles(FXObject * tgt,FXSelector sel,const FXStringList & files);
+  FXRemoveFiles(FXObject * tgt,FXSelector sel,FXStringList & files);
 
   void respondDelete(FXbool ignore);
   };

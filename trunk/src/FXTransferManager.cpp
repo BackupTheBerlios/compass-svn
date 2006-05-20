@@ -36,7 +36,7 @@ FXDEFMAP(FXTransferManager) FXTransferManagerMap[]={
 FXIMPLEMENT(FXTransferManager,FXMainWindow,FXTransferManagerMap,ARRAYNUMBER(FXTransferManagerMap))
 
 
-FXTransferManager::FXTransferManager(FXWindow* owner,const FXStringList & files,const FXString & destination,FXuint operation) :
+FXTransferManager::FXTransferManager(FXWindow* owner,FXStringList & files,const FXString & destination,FXuint operation) :
   FXMainWindow(owner->getApp(),"Copying File(s)...",NULL,NULL,DECOR_TITLE|DECOR_BORDER,0,0,0,0,0,0,0,0), progress_bar(NULL){
 
   FXFontDesc 				fontdescription;

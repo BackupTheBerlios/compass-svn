@@ -19,7 +19,7 @@
 #include "common.h"
 #include "FXRemoveFiles.h"
 
-FXRemoveFiles::FXRemoveFiles(FXObject * tgt,FXSelector sel,const FXStringList & f) : FXTransfer(tgt,sel),files(f),ignore(FALSE) {
+FXRemoveFiles::FXRemoveFiles(FXObject * tgt,FXSelector sel,FXStringList & f) : FXTransfer(tgt,sel),files(f),ignore(FALSE) {
   }
 
 FXbool FXRemoveFiles::remove(const FXString& path){

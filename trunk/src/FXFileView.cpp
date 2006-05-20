@@ -219,6 +219,13 @@ void FXFileView::loadSettings(const FXString & key) {
   if (getApp()->reg().readIntEntry(key.text(),"show-directory-tree",0)==0){
     dirframe->hide();
     }
+
+  showhiddenfiles = getApp()->reg().readBoolEntry(key.text(),"show-hidden-files",FALSE);   
+  filelist->showHiddenFiles(showhiddenfiles);
+  dirlist->showHiddenFiles(showhiddenfiles);
+    
+
+
   }
 
 
@@ -288,7 +295,7 @@ long FXFileView::onDirListRightClick(FXObject*,FXSelector,void*ptr){
 long FXFileView::onDirListDeleted(FXObject*,FXSelector,void*ptr){
   FXTreeItem * item = reinterpret_cast<FXTreeItem*>(ptr);
   FXString url = dirlist->getItemPathname(item);
-  fxmessage("url got deleted: %s - %d \n",url.text(),item->isSelected());
+  //fxmessage("url got deleted: %s - %d \n",url.text(),item->isSelected());
   return 1;
   }
 

@@ -19,10 +19,10 @@
 #include "common.h"
 #include "FXCopyFiles.h"
 
-FXCopyFiles::FXCopyFiles(FXObject * tgt,FXSelector sel,const FXStringList & f,const FXString & d) : FXTransfer(tgt,sel),
-  files(f),
+FXCopyFiles::FXCopyFiles(FXObject * tgt,FXSelector sel,FXStringList & f,const FXString & d) : FXTransfer(tgt,sel),
   destination(d),
   overwrite(MAYBE) {
+  files.adopt(f);
   }
 
 void FXCopyFiles::send_filename(const FXString & filename,FXuint size){

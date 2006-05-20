@@ -31,7 +31,7 @@ private:
   FXIcon *  current_icon;        // Current icon
   FXint     num_selected;        // Number of selected files
   FXHistory current_history;     // Current History
-  bool      showhiddenfiles;     // Show Hidden Files
+  FXbool    showhiddenfiles;     // Show Hidden Files
 protected:
   FXFileListEx      * filelist;
   FXDirList         * dirlist;

@@ -35,7 +35,7 @@ protected:
   void send_filename(const FXString & filename,FXuint size);
   void send_progress(FXuint pos);
 public:
-  FXCopyFiles(FXObject * tgt,FXSelector sel,const FXStringList & files,const FXString & destination);
+  FXCopyFiles(FXObject * tgt,FXSelector sel,FXStringList & files,const FXString & destination);
 
   virtual void respondOverwrite(FXbool,FXbool,FXbool);
 

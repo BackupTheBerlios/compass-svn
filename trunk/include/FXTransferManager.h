@@ -52,7 +52,7 @@ public:
 	long onSessionNotify(FXObject*,FXSelector,void*);
 	long onSessionClosed(FXObject*,FXSelector,void*);
 public:
-  FXTransferManager(FXWindow * owner,const FXStringList & files,const FXString & destination,FXuint operation);
+  FXTransferManager(FXWindow * owner,FXStringList & files,const FXString & destination,FXuint operation);
 
   virtual void show(FXuint placement=PLACEMENT_OWNER);
 

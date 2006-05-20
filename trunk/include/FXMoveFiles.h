@@ -27,7 +27,7 @@ protected:
 protected:
   FXbool moveFiles(const FXString& srcfile,const FXString& dstfile);
 public:
-  FXMoveFiles(FXObject * tgt,FXSelector sel,const FXStringList & files,const FXString & destination);
+  FXMoveFiles(FXObject * tgt,FXSelector sel,FXStringList & files,const FXString & destination);
   };
 
 #endif
