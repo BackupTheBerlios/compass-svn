@@ -19,6 +19,31 @@
 #ifndef FXFILEDICTEX_H
 #define FXFILEDICTEX_H
 
+
+class FXAPI FXIconSourceEx : public FXIconSource {
+  FXDECLARE(FXIconSourceEx)
+protected:
+  FXIconSourceEx(){}
+private:
+  FXIconSourceEx(const FXIconSourceEx&);
+  FXIconSourceEx &operator=(const FXIconSourceEx&);
+public:
+  FXIconSourceEx(FXApp* a);
+  virtual FXIcon *loadIconFile(const FXString& filename,const FXString& type=FXString::null) const;
+  virtual FXIcon *loadIconData(const void *pixels,const FXString& type=FXString::null) const;
+  virtual FXIcon *loadIconStream(FXStream& store,const FXString& type=FXString::null) const;
+  virtual FXImage *loadImageFile(const FXString& filename,const FXString& type=FXString::null) const;
+  virtual FXImage *loadImageData(const void *pixels,const FXString& type=FXString::null) const;
+  virtual FXImage *loadImageStream(FXStream& store,const FXString& type=FXString::null) const;
+  virtual FXIcon *loadScaledIconFile(const FXString& filename,FXint size=32,FXint qual=0,const FXString& type=FXString::null) const;
+  virtual FXIcon *loadScaledIconData(const void *pixels,FXint size=32,FXint qual=0,const FXString& type=FXString::null) const;
+  virtual FXIcon *loadScaledIconStream(FXStream& store,FXint size=32,FXint qual=0,const FXString& type=FXString::null) const;
+  virtual FXImage *loadScaledImageFile(const FXString& filename,FXint size=32,FXint qual=0,const FXString& type=FXString::null) const;
+  virtual FXImage *loadScaledImageData(const void *pixels,FXint size=32,FXint qual=0,const FXString& type=FXString::null) const;
+  virtual FXImage *loadScaledImageStream(FXStream& store,FXint size=32,FXint qual=0,const FXString& type=FXString::null) const;
+  };
+
+
 class FXFileDictEx : public FXFileDict {
   FXDECLARE(FXFileDictEx)
 protected:

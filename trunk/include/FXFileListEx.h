@@ -19,6 +19,7 @@
 #ifndef FXFILELISTEX_H
 #define FXFILELISTEX_H
 
+
 class FXFileListEx : public FXFileList {
 FXDECLARE(FXFileListEx)
 private:

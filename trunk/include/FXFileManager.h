@@ -99,6 +99,7 @@ public:
   long onSessionNotify(FXObject*,FXSelector,void*);
   long onSessionClosed(FXObject*,FXSelector,void*);
 
+  long onCmdEdit(FXObject*,FXSelector,void*);
   long onCmdProperties(FXObject*,FXSelector,void*);
   long onUpdHasSelection(FXObject*,FXSelector,void*);
 
@@ -224,6 +225,7 @@ public:
     ID_NEW_TAB,
     ID_CLOSE_TAB,
     ID_DETACH_TAB,
+    ID_EDIT,
     ID_TEST
     };
 public:

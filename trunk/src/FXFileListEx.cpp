@@ -36,8 +36,9 @@ FXFileListEx::FXFileListEx(){
   }
 
 
+
 FXFileListEx::FXFileListEx(FXComposite *p,FXObject* tgt,FXSelector sel,FXuint opts,FXint x,FXint y,FXint w,FXint h): FXFileList(p,tgt,sel,opts,x,y,w,h){
-    }
+  }
 
 
 // Handle drag-and-drop enter, remember current directory

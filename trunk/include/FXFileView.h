@@ -51,6 +51,8 @@ public:
     ID_IMAGEPREVIEW,
     ID_SHOWHIDDENFILES,
     ID_SHOWDIRTREE,
+    ID_SHOWPARENTDIR,
+    ID_SHOWIMAGES
     };
 public:
   long onDefault(FXObject*,FXSelector,void*);
@@ -66,6 +68,10 @@ public:
   long onUpdShowHiddenFiles(FXObject*,FXSelector,void*);
   long onCmdShowDirTree(FXObject*,FXSelector,void*);
   long onUpdShowDirTree(FXObject*,FXSelector,void*);
+  long onCmdShowParentDirectory(FXObject*,FXSelector,void*);
+  long onUpdShowParentDirectory(FXObject*,FXSelector,void*);
+  long onCmdShowImages(FXObject*,FXSelector,void*);
+  long onUpdShowImages(FXObject*,FXSelector,void*);
 public:
   FXFileView(FXComposite *p,FXObject * tgt=NULL,FXSelector sel=0,FXuint opts=0);
 

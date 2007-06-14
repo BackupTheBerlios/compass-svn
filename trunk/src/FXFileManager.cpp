@@ -111,8 +111,11 @@ FXDEFMAP(FXFileManager) FXFileManagerMap[]={
 
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_DELETE,FXFileManager::onUpdHasSelection),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_PROPERTIES,FXFileManager::onUpdHasSelection),
+  FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_EDIT,FXFileManager::onUpdHasSelection),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_RENAME,FXFileManager::onUpdRename),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_REPLACE,FXFileManager::onUpdReplace),
+
+
 
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_COPY,FXFileManager::onUpdCopy),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_CUT,FXFileManager::onUpdCut),
@@ -150,6 +153,7 @@ FXDEFMAP(FXFileManager) FXFileManagerMap[]={
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_ADD_BOOKMARK,FXFileManager::onCmdAddBookmark),
 
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_PROPERTIES,FXFileManager::onCmdProperties),
+  FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_EDIT,FXFileManager::onCmdEdit),
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_DUP_WINDOW,FXFileManager::onCmdDuplicateWindow),
 
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_COPY,FXFileManager::onCmdCopy),
@@ -299,7 +303,10 @@ void FXFileManager::initUserInterface() {
   // View Menu
   viewmenu=new FXMenuPane(this);
   new FXMenuTitle(menubar,"&View",NULL,viewmenu);
+  new FXMenuCheck(viewmenu,"Show Directory Tree",&fileview_delegator,FXFileView::ID_SHOWDIRTREE);
   new FXMenuCheck(viewmenu,"Show Hidden Files",&fileview_delegator,FXFileView::ID_SHOWHIDDENFILES);
+  new FXMenuCheck(viewmenu,"Show Parent Directory",&fileview_delegator,FXFileView::ID_SHOWPARENTDIR);
+  new FXMenuCheck(viewmenu,"Show Image Preview",&fileview_delegator,FXFileView::ID_SHOWIMAGES);
   new FXSeparator(viewmenu);
   new FXMenuRadio(viewmenu,"Detailed View",&fileview_delegator,FXFileList::ID_SHOW_DETAILS);
   new FXMenuRadio(viewmenu,"Icon View",&fileview_delegator,FXFileList::ID_SHOW_MINI_ICONS);
@@ -309,8 +316,6 @@ void FXFileManager::initUserInterface() {
   new FXMenuRadio(viewmenu,"Arrange by Rows",&fileview_delegator,FXFileList::ID_ARRANGE_BY_ROWS);
   new FXSeparator(viewmenu);
   new FXMenuCascade(viewmenu,"Sort Files",NULL,sortmenu);
-  new FXSeparator(viewmenu);
-  new FXMenuCheck(viewmenu,"Show Directory Tree",&fileview_delegator,FXFileView::ID_SHOWDIRTREE);
 
   // View Menu
   windowmenu=new FXMenuPane(this);
@@ -574,9 +579,9 @@ void FXFileManager::updateActiveTab(FXint tab) {
 
 void FXFileManager::setTabLabel(FXTabItem * item,const FXString & url,FXIcon * icon){
   if (item){
-    FXString name = FXPath::name(url);
-    if (name.empty()) name = FXPath::directory(url);
-    item->setText(name);
+//    FXString name = FXPath::name(url);
+//    if (name.empty()) name = FXPath::directory(url);
+    item->setText(url);
     item->setIcon(icon);
     }
   }
@@ -620,6 +625,8 @@ void FXFileManager::updateView(const FXString & url,FXIcon * icon,bool do_previe
   location->setText(url);
   location->setIcon(icon);
 
+  FXString title = FXPath::name(url);
+/*
   /// Set Tab and Window Title
   FXString title = FXPath::name(url);
   if (title.empty()) title = FXPath::directory(url);
@@ -627,10 +634,11 @@ void FXFileManager::updateView(const FXString & url,FXIcon * icon,bool do_previe
     tabitem->setIcon(icon);
     tabitem->setText(title);
     }
+*/
   setTitle(title+" - "+ApplicationTitle);
 
   /// Update Tab Text and Icon
-//  setTabLabel(tabitem,url,icon);
+  setTabLabel(tabitem,url,icon);
 
   /// Update the Window Title
   //setTitle(FXPath::name(url)+" - "+ApplicationTitle);
@@ -703,7 +711,7 @@ bool FXFileManager::preview(const FXString & url){
       FXFileApplication::me->createWindow(url);
       return true; // We're done here. New Window should take care of things
       }
-    fileview->preview(image);
+    fileview->preview(image);    
     return true;
     }
   return false;
@@ -740,6 +748,16 @@ bool FXFileManager::isWritable(const FXString & url) {
     return false;
   }
 
+long FXFileManager::onCmdEdit(FXObject*,FXSelector,void*) {
+  FXString command = "adie";
+  FXStringList list;
+  fileview->getSelection(list);
+  for (FXint i=0;i<list.no();i++) {
+    command+=" " + FXPath::enquote(list[i]);
+    }
+  execute(command);
+  return 1;
+  }
 
 
 long FXFileManager::onCmdActiveTab(FXObject*,FXSelector,void*ptr){
@@ -1876,9 +1894,7 @@ long FXFileManager::onCmdFileViewFileContext(FXObject*,FXSelector,void*ptr){
     new FXMenuCommand(&pane,"Paste\tCtrl-V",FXFileApplication::me->icon_paste,this,ID_PASTE);
     }
   else {
-    new FXMenuCommand(&pane,"Open...",NULL,NULL,0);
-    new FXMenuCommand(&pane,"Open with...",NULL,NULL,0);
-    new FXMenuCommand(&pane,"Open with editor",NULL,NULL,0);
+    new FXMenuCommand(&pane,"Open in Editor",NULL,this,ID_EDIT);
     new FXMenuSeparator(&pane);
     new FXMenuCommand(&pane,"Copy\tCtrl-C",FXFileApplication::me->icon_copy,this,ID_COPY);
     new FXMenuCommand(&pane,"Cut\tCtrl-X",FXFileApplication::me->icon_cut,this,ID_CUT);

@@ -37,6 +37,10 @@ FXDEFMAP(FXFileView) FXFileViewMap[]={
   FXMAPFUNC(SEL_CHANGED,FXFileView::ID_DIRLIST,FXFileView::onCmdDirList),
   FXMAPFUNC(SEL_COMMAND,FXFileView::ID_SHOWDIRTREE,FXFileView::onCmdShowDirTree),
   FXMAPFUNC(SEL_UPDATE,FXFileView::ID_SHOWDIRTREE,FXFileView::onUpdShowDirTree),
+  FXMAPFUNC(SEL_COMMAND,FXFileView::ID_SHOWPARENTDIR,FXFileView::onCmdShowParentDirectory),
+  FXMAPFUNC(SEL_UPDATE,FXFileView::ID_SHOWPARENTDIR,FXFileView::onUpdShowParentDirectory),
+  FXMAPFUNC(SEL_COMMAND,FXFileView::ID_SHOWIMAGES,FXFileView::onCmdShowImages),
+  FXMAPFUNC(SEL_UPDATE,FXFileView::ID_SHOWIMAGES,FXFileView::onUpdShowImages),
   };
 
 FXIMPLEMENT(FXFileView,FXSplitter,FXFileViewMap,ARRAYNUMBER(FXFileViewMap));
@@ -56,7 +60,7 @@ FXFileView::FXFileView(FXComposite *p,FXObject * tgt,FXSelector sel,FXuint opts)
   dirlist->setAssociations(FXFileApplication::me->getAssociations());
   sunkenframe = new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0,0,0,0,0);
   switcher  = new FXSwitcher(sunkenframe,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,0,0,0,0);
-  filelist  = new FXFileListEx(switcher,this,ID_FILELIST,LAYOUT_FILL_X|LAYOUT_FILL_Y|FILELIST_NO_OWN_ASSOC|FILELIST_NO_PARENT);
+  filelist  = new FXFileListEx(switcher,this,ID_FILELIST,LAYOUT_FILL_X|LAYOUT_FILL_Y|FILELIST_NO_OWN_ASSOC);
   imageview = new FXImageViewEx(switcher,NULL,this,ID_IMAGEPREVIEW,LAYOUT_FILL_X|LAYOUT_FILL_Y);
   filelist->setAssociations(FXFileApplication::me->getAssociations());
 
@@ -458,4 +462,38 @@ long FXFileView::onUpdShowDirTree(FXObject*sender,FXSelector,void*){
   }
 
 
+long FXFileView::onCmdShowParentDirectory(FXObject*,FXSelector,void*){
+  filelist->showParents(!filelist->showParents());
+  return 1;
+  }
+
+long FXFileView::onUpdShowParentDirectory(FXObject*sender,FXSelector,void*){
+  if (filelist->showParents())
+    sender->handle(this,FXSEL(SEL_COMMAND,ID_CHECK),0);
+  else
+    sender->handle(this,FXSEL(SEL_COMMAND,ID_UNCHECK),0);
+  return 1;
+  }
+
+
+
+long FXFileView::onCmdShowImages(FXObject*,FXSelector,void*){
+  if (filelist->showImages()) {
+    filelist->setItemSpace(128);
+    }
+  else {
+    filelist->setItemSpace(134);
+    filelist->setImageSize(128);
+    }
+  filelist->showImages(!filelist->showImages());
+  return 1;
+  }
+
+long FXFileView::onUpdShowImages(FXObject*sender,FXSelector,void*){
+  if (filelist->showImages())
+    sender->handle(this,FXSEL(SEL_COMMAND,ID_CHECK),0);
+  else
+    sender->handle(this,FXSEL(SEL_COMMAND,ID_UNCHECK),0);
+  return 1;
+  }
 

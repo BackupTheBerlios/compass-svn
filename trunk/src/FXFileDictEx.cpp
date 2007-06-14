@@ -21,7 +21,80 @@
 
 FXIMPLEMENT(FXFileDictEx,FXFileDict,NULL,0);
 
+
+FXIMPLEMENT(FXIconSourceEx,FXIconSource,NULL,0);
+
+FXIconSourceEx::FXIconSourceEx(FXApp *a) : FXIconSource(a) {
+  }
+
+FXIcon *FXIconSourceEx::loadIconFile(const FXString& filename,const FXString& type) const{
+  FXIcon * icon = FXIconSource::loadIconFile(filename,type);
+  if (icon && icon->hasAlpha()) icon->blend(app->getBackColor());
+  return icon;
+  }
+FXIcon *FXIconSourceEx::loadIconData(const void *pixels,const FXString& type) const{
+  FXIcon * icon = FXIconSource::loadIconData(pixels,type);
+  if (icon && icon->hasAlpha()) icon->blend(app->getBackColor());
+  return icon;
+  }
+FXIcon *FXIconSourceEx::loadIconStream(FXStream& store,const FXString& type) const{
+  FXIcon * icon = FXIconSource::loadIconStream(store,type);
+  if (icon && icon->hasAlpha()) icon->blend(app->getBackColor());
+  return icon;
+  }
+FXImage *FXIconSourceEx::loadImageFile(const FXString& filename,const FXString& type) const{
+  FXImage * image = FXIconSource::loadImageFile(filename,type);
+  if (image && image->hasAlpha()) image->blend(app->getBackColor());
+  return image;
+  }
+FXImage *FXIconSourceEx::loadImageData(const void *pixels,const FXString& type) const{
+  FXImage * image = FXIconSource::loadImageData(pixels,type);
+  if (image && image->hasAlpha()) image->blend(app->getBackColor());
+  return image;
+  }
+FXImage *FXIconSourceEx::loadImageStream(FXStream& store,const FXString& type) const{
+  FXImage * image = FXIconSource::loadImageStream(store,type);
+  if (image && image->hasAlpha()) image->blend(app->getBackColor());
+  return image;
+  }
+FXIcon *FXIconSourceEx::loadScaledIconFile(const FXString& filename,FXint size,FXint qual,const FXString& type) const{
+  FXIcon * icon = FXIconSource::loadScaledIconFile(filename,size,qual,type);
+  if (icon && icon->hasAlpha()) icon->blend(app->getBackColor());
+  return icon;
+  }
+FXIcon *FXIconSourceEx::loadScaledIconData(const void *pixels,FXint size,FXint qual,const FXString& type) const{
+  FXIcon * icon = FXIconSource::loadScaledIconData(pixels,size,qual,type);
+  if (icon && icon->hasAlpha()) icon->blend(app->getBackColor());
+  return icon;
+  }
+FXIcon *FXIconSourceEx::loadScaledIconStream(FXStream& store,FXint size,FXint qual,const FXString& type) const{
+  FXIcon * icon = FXIconSource::loadScaledIconStream(store,size,qual,type);
+  if (icon && icon->hasAlpha()) icon->blend(app->getBackColor());
+  return icon;
+  }
+FXImage *FXIconSourceEx::loadScaledImageFile(const FXString& filename,FXint size,FXint qual,const FXString& type) const{
+  FXImage * image = FXIconSource::loadScaledImageFile(filename,size,qual,type);
+  if (image && image->hasAlpha()) image->blend(app->getBackColor());
+  return image;
+  }
+FXImage *FXIconSourceEx::loadScaledImageData(const void *pixels,FXint size,FXint qual,const FXString& type) const{
+  FXImage * image = FXIconSource::loadScaledImageData(pixels,size,qual,type);
+  if (image && image->hasAlpha()) image->blend(app->getBackColor());
+  return image;
+  }
+FXImage *FXIconSourceEx::loadScaledImageStream(FXStream& store,FXint size,FXint qual,const FXString& type) const{
+  FXImage * image = FXIconSource::loadScaledImageStream(store,size,qual,type);
+  if (image && image->hasAlpha()) image->blend(app->getBackColor());
+  return image;
+  }
+
+
+
+
+
 FXFileDictEx::FXFileDictEx(FXApp * app) : FXFileDict(app) {
+  delete getIconDict()->getIconSource();
+  getIconDict()->setIconSource(new FXIconSourceEx(app));
   }
 
 #if FOX_MINOR == 6
@@ -30,6 +103,8 @@ void *FXFileDictEx::createData(const void* ptr) {
 void *FXFileDictEx::createData(void* ptr) {
 #endif
   FXFileAssoc * assoc =  reinterpret_cast<FXFileAssoc*>(FXFileDict::createData(ptr));
+/*
+  fxmessage("CHECK\n");
 
   if (assoc->bigicon && assoc->bigicon->hasAlpha())
     assoc->bigicon->blend(FXRGB(255,255,255));
@@ -42,6 +117,6 @@ void *FXFileDictEx::createData(void* ptr) {
 
   if (assoc->miniiconopen && assoc->miniiconopen->hasAlpha())
     assoc->miniiconopen->blend(FXRGB(255,255,255));
-
+*/
   return assoc;
   }
