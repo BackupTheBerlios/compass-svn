@@ -499,7 +499,8 @@ void FXFileManager::createTab(bool initialtabonly) {
     // Create Tab Book And First Tab Item
     tabbook = new FXTabBook(main,this,ID_TABVIEW,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,3,3,0,2);
     tabitem = new FXTabItem(tabbook,FXString::null);
-    frame   = new FXVerticalFrame(tabbook,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED|FRAME_THICK,0,0,0,0);
+    frame   = new FXVerticalFrame(tabbook,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,0,0,0,0);
+    new FXSeparator(frame,LAYOUT_FILL_X|SEPARATOR_GROOVE);
     FXASSERT(fileview);
     setTabLabel(tabitem,fileview->url(),fileview->icon());
     tabbook->create();
@@ -511,7 +512,8 @@ void FXFileManager::createTab(bool initialtabonly) {
   if (initialtabonly) return;
 
   tabitem      = new FXTabItem(tabbook,FXString::null);
-  frame        = new FXVerticalFrame(tabbook,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED|FRAME_THICK,0,0,0,0);
+  frame        = new FXVerticalFrame(tabbook,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,0,0,0,0);
+  new FXSeparator(frame,LAYOUT_FILL_X|SEPARATOR_GROOVE);
   fileview     = new FXFileView(frame,this,ID_FILEVIEW,LAYOUT_FILL_X|LAYOUT_FILL_Y);
   fileview_delegator.setDelegate(fileview);
   tabitem->setTarget(this);
@@ -533,7 +535,7 @@ void FXFileManager::closeTab(FXint tab){
   // Delete Tabbook if only one tab left
   if (tabbook->numChildren()==2) {
 
-    fileview = dynamic_cast<FXFileView*>(tabbook->childAtIndex(1)->getFirst());
+    fileview = dynamic_cast<FXFileView*>(tabbook->childAtIndex(1)->childAtIndex(1));
     fileview_delegator.setDelegate(fileview);
     fileview->reparent(main);
 
@@ -565,7 +567,7 @@ void FXFileManager::showTabs() {
 
 void FXFileManager::updateActiveTab(FXint tab) {
   tabitem  = dynamic_cast<FXTabItem*>(tabbook->childAtIndex(tab*2));
-  fileview = dynamic_cast<FXFileView*>(tabbook->childAtIndex((tab*2)+1)->getFirst());
+  fileview = dynamic_cast<FXFileView*>(tabbook->childAtIndex((tab*2)+1)->childAtIndex(1));
   fileview_delegator.setDelegate(fileview);
 
   /// Set the Window Title
