@@ -27,5 +27,4 @@
 
 typedef FXArray<FXString> FXStringList;
 
-
 #endif

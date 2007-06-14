@@ -24,6 +24,7 @@
 #ifndef FXURLBOX_H
 #define FXURLBOX_H
 
+
 // ComboBox styles
 enum {
   URLBOX_NO_REPLACE     = 0,                  // Leave the list the same

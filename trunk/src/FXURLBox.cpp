@@ -46,12 +46,9 @@
 #define URLBOX_INS_MASK   (URLBOX_REPLACE|URLBOX_INSERT_BEFORE|URLBOX_INSERT_AFTER|URLBOX_INSERT_FIRST|URLBOX_INSERT_LAST)
 #define URLBOX_MASK       (URLBOX_STATIC|URLBOX_INS_MASK)
 
-using namespace FX;
-
 
 /*******************************************************************************/
 
-namespace FX {
 
 // Map
 FXDEFMAP(FXURLBox) FXURLBoxMap[]={
@@ -760,4 +757,3 @@ FXURLBox::~FXURLBox(){
 	label=(FXLabel*)-1L;
   }
 
-}

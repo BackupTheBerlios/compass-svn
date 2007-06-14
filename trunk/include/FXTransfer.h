@@ -73,6 +73,55 @@ public:
   virtual ~FXTransfer();
   };
 
+/*
+class FXDirIterator : public FXThread {
+private:
+  FXbool list(const FXString & dir);
+protected:
+  virtual FXbool handle_dir(const FXString & filename);
+  virtual FXbool handle_file(const FXString & filename,const FXStat & info);
+public:
+  };
+
+
+FXbool FXDirIterator::list(const FXString & directory){
+  if (!handle_dir(directory)) return false;
+
+  FXDir dir(directory);
+  FXStat info;
+
+  while(dir.next()){
+
+    if !FXStat::statFile(dir.name(),info)) return false;
+
+    if (info.isDirectory())
+      list(dir.name());
+    else if (info.isFile())
+      handle_file(dir.name(),info);
+    
+        
+  
+
+
+
+    }
+
+  /// Go to next one
+  virtual FXbool next();
+
+  /// Return current file name
+  virtual FXString name() const;
+
+
+
+  }
+  
+*/
+
+
+
+
+
 #endif
 
 

@@ -22,11 +22,9 @@
 #include "FXFileApplication.h"
 #include "FXFileManager.h"
 
-const char * fifo = "/tmp/compass.dde";
-
 bool initDDE(int argc,char * argv[],FXFile & dde){
   FXStat info;
-
+  FXString fifo = FXSystem::getHomeDirectory() + ".compass.dde";
   FXString cmd = argv[1];
   if (cmd.empty()) cmd = FXSystem::getHomeDirectory();
 
@@ -58,12 +56,12 @@ bool initDDE(int argc,char * argv[],FXFile & dde){
     }
 
   /// Create Fifo if we're the only process
-  if (mkfifo(fifo,S_IWUSR|S_IRUSR)!=0)
+  if (mkfifo(fifo.text(),S_IWUSR|S_IRUSR)!=0)
       return false;
 
   /// Open the Fifo
   if (!dde.open(fifo,FXIO::Reading|FXIO::WriteOnly,FXIO::OwnerWrite))
-    fxmessage("Failed to open /tmp/gmm.dde\n");
+    fxmessage("Failed to open ~/.compass.dde\n");
 
   return false;
   }
@@ -106,6 +104,7 @@ int main(int argc,char **argv){
 
   /// Remove DDE
   dde.close();
+  FXString fifo = FXSystem::getHomeDirectory() + ".compass.dde";
   FXFile::remove(fifo);
 
   return result;

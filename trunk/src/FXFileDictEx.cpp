@@ -31,16 +31,16 @@ void *FXFileDictEx::createData(void* ptr) {
 #endif
   FXFileAssoc * assoc =  reinterpret_cast<FXFileAssoc*>(FXFileDict::createData(ptr));
 
-  if (assoc->bigicon)
+  if (assoc->bigicon && assoc->bigicon->hasAlpha())
     assoc->bigicon->blend(FXRGB(255,255,255));
 
-  if (assoc->miniicon)
+  if (assoc->miniicon && assoc->miniicon->hasAlpha())
     assoc->miniicon->blend(FXRGB(255,255,255));
 
-  if (assoc->bigiconopen)
+  if (assoc->bigiconopen && assoc->bigiconopen->hasAlpha())
     assoc->bigiconopen->blend(FXRGB(255,255,255));
 
-  if (assoc->miniiconopen)
+  if (assoc->miniiconopen && assoc->miniiconopen->hasAlpha())
     assoc->miniiconopen->blend(FXRGB(255,255,255));
 
   return assoc;

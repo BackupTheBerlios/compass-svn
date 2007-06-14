@@ -117,8 +117,8 @@ void FXFileView::preview(FXImage * image){
   else {
     switcher->setCurrent(1);
     }
-
-  image->blend(imageview->getBackColor());
+  if (image->hasAlpha())
+    image->blend(imageview->getBackColor());
   image->create();
   imageview->setImage(image);
   }
