@@ -498,7 +498,6 @@ long FXFileProperties::onCmdAccept(FXObject*sender,FXSelector sel,void*ptr){
         mode&=~FXIO::OtherFull;
         }
       if (groupidchanged){
-        fxmessage("Yo...%d\n",groupid);
         mode&=~FXIO::SetGroup;
         if (groupcheck->getCheck()) mode|=FXIO::SetGroup;
         }

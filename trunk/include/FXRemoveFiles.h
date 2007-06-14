@@ -28,6 +28,7 @@ protected:
 protected:
   virtual FXint run();
 protected:
+  void send_filename(const FXString & filename);
   void queryDelete(const FXString &);
   FXbool remove(const FXString &);
 public:

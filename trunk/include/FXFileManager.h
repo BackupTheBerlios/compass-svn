@@ -48,6 +48,7 @@ protected:
   FXStatusBar     * statusbar;
   FXButton        * dirupbutton;
   FXButton        * homebutton;
+  FXRecentFiles     bookmarks;
   FXMenuPane      * filemenu;
   FXMenuPane      * editmenu;
   FXMenuPane      * sortmenu;
@@ -63,8 +64,6 @@ protected:
 
   bool         clipboard_cut;
   FXStringList clipboard;
-
-
 
   FXString     orgdirectory;   // Directory
   FXString     dropdirectory;  // Drop directory
@@ -129,6 +128,9 @@ public:
 
   long onCmdGoHome(FXObject*,FXSelector,void*);
   long onCmdGoUp(FXObject*,FXSelector,void*);
+  long onCmdGoBookmark(FXObject*,FXSelector,void*);
+
+  long onCmdAddBookmark(FXObject*,FXSelector,void*);
 
   long onCmdDuplicateWindow(FXObject*,FXSelector,void*);
 
@@ -198,6 +200,8 @@ public:
     ID_GO_FORWARD,
     ID_GO_BACK,
     ID_GO_UP,
+    ID_GO_BOOKMARK,
+    ID_ADD_BOOKMARK,
     ID_LOCATION,
     ID_CLEAR_LOCATION,
     ID_COPY,

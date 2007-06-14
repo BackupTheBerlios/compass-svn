@@ -82,10 +82,23 @@ void FXFileView::selectFile(const FXString & file){
     if (filelist->getItemFilename(i)==file){
       filelist->selectItem(i,TRUE);
       filelist->setCurrentItem(i);
+      filelist->makeItemVisible(i);
       break;
       }
     }
   }
+
+
+void FXFileView::showFile(const FXString & file){
+  for (FXint i=0;i<filelist->getNumItems();i++){
+    if (filelist->getItemFilename(i)==file){
+      filelist->makeItemVisible(i);
+      filelist->setCurrentItem(i);
+      break;
+      }
+    }
+  }
+
 
 /// View a url
 void FXFileView::view(const FXString & url,FXIcon * ic,bool preview){
@@ -234,9 +247,6 @@ FXint FXFileView::getNumSelected() const {
   for (FXint i=0;i<filelist->getNumItems();i++)
     if (filelist->isItemSelected(i)) num++;
   return num;
-
-
-
 //  return num_selected;
   }
 

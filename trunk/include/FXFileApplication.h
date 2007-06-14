@@ -73,8 +73,6 @@ public:
 
   FXIcon * icon_lock;
 
-
-
   FXFont * font_title;
 private:
   FXFile * dde;
@@ -120,7 +118,6 @@ public:
   FXIcon * getIconForUrl(const FXString & url);
 
   FXFileDict * getAssociations() const;
-
 
   virtual void init(int& argc,char** argv,FXbool connect=TRUE);
 

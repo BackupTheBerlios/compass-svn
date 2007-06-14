@@ -75,6 +75,9 @@ public:
   /// Select a file
   void selectFile(const FXString & file);
 
+  /// Show File
+  void showFile(const FXString & file);
+
   /// Preview a image
   void preview(FXImage *);
 
@@ -113,7 +116,6 @@ public:
 
   /// Return Number of Selected Files
   FXint getNumSelected() const;
-
 
   /// Destructor
   ~FXFileView();

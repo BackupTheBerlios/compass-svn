@@ -92,7 +92,7 @@ FXTransferManager::FXTransferManager(FXWindow* owner,FXStringList & files,const 
   else if (operation==OP_MOVE)
     new FXLabel(matrix,"Moved:",NULL,LABEL_NORMAL|LAYOUT_FILL_X|JUSTIFY_RIGHT|LAYOUT_CENTER_Y);
   else if (operation==OP_DELETE)
-    new FXLabel(matrix,"Delete:",NULL,LABEL_NORMAL|LAYOUT_FILL_X|JUSTIFY_RIGHT|LAYOUT_CENTER_Y);
+    new FXLabel(matrix,"Deleted:",NULL,LABEL_NORMAL|LAYOUT_FILL_X|JUSTIFY_RIGHT|LAYOUT_CENTER_Y);
 
   text_count = new FXTextField(matrix,10,NULL,0,TEXTFIELD_READONLY|TEXTFIELD_INTEGER|LAYOUT_FILL_X|JUSTIFY_LEFT);
   text_count->disable();

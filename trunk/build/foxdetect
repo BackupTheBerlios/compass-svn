@@ -1,21 +1,121 @@
+#-------------------------------------------------------------------------------
+# Where in the universe is FOX ?
+#
+# Scenario 1 - Installed by package management system
+#----------------------------------------------------
+#
+#  prefix = /usr
+#  lib    = lib (32 bit or 64 bit system) or lib64 (64 bit)
+#
+#
+#
+# Scenario 2 - Installed by user using ./configure
+#----------------------------------------------------
+#
+#  prefix = /usr or /usr/local or other prefix using default in
+#  lib    = lib (FOX itself never uses lib64)
+#
+#-------------------------------------------------------------------------------
 if [ $SHOWHELP -eq 1 ] ; then
-	echo -e "  \033[32m--fox-prefix=<p>\033[0m      \033[1mFOX Installation Prefix\033[0m"
+	echo -e "  \033[32m--fox-prefix=<p>\033[0m       \033[1mFOX Installation Prefix\033[0m"
 else
-#-------------------------------------------------------------------------------
-# Detect where FOX is installed
-#-------------------------------------------------------------------------------
-USER_PREFIX="${DEFAULT_PREFIX}"
-LOCAL_PREFIX="${DEFAULT_PREFIX}/local"
 
-MIN_FOX_MINOR=${MIN_FOX_MINOR:-6}
-MIN_FOX_MAJOR=${MIN_FOX_MAJOR:-1}
 
-FOX_PREFIX=${DEFAULT_PREFIX}
-FOX_MAJOR=${MIN_FOX_MAJOR}
-FOX_MINOR=${MIN_FOX_MINOR}
-FOX_RELEASE=0
+fox_check_in_prefix() 
+{
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+    echo -e " Searching for FOX in $1 ... "
 
-# Check if command line overrides --fox-prefix
+    FOX_LIB_FOUND=0
+    FOX_INC_FOUND=0
+
+    # Check fox-config
+    #--------------------------------------------
+    if [ ! -x $1/bin/fox-config ] ; then
+        echo -e " Check FOX Config    : \033[31mNot Found\033[0m"
+        return 0
+    fi
+    
+    echo -e " Check FOX Config    : \033[32mFOUND\033[0m"
+
+    # Get the version from fox-config
+    FOX_VERSION=`$1/bin/fox-config --version`
+    FOX_MAJOR=`echo "${FOX_VERSION}" | cut -d. -f1`
+    FOX_MINOR=`echo "${FOX_VERSION}" | cut -d. -f2`
+    FOX_RELEASE=`echo "${FOX_VERSION}" | cut -d. -f3`
+    
+    # Make sure it is a compatible version
+    #--------------------------------------------
+    if [ $FOX_MAJOR -lt $MIN_FOX_MAJOR ] ; then
+        echo -e " Check FOX Version    : \033[31mUnsupported ($FOX_MAJOR.$FOX_MINOR.$FOX_RELEASE)\033[0m"
+        return 0
+    fi
+
+    if [ $FOX_MINOR -lt $MIN_FOX_MINOR ] ; then
+        echo -e " Check FOX Version    : \033[31mUnsupported ($FOX_MAJOR.$FOX_MINOR.$FOX_RELEASE)\033[0m"
+        return 0
+    fi
+
+    echo -e " Check FOX Version   : \033[32m$FOX_MAJOR.$FOX_MINOR.$FOX_RELEASE\033[0m"
+    
+    # Find the Library
+    #--------------------------------------------
+    if [ -f $1/lib/${LIBPREFIX}FOX-$FOX_MAJOR.$FOX_MINOR$DLLEXT ] ; then
+        FOX_LIB_FOUND=1
+    elif [ -f $1/lib/${LIBPREFIX}FOX-$FOX_MAJOR.$FOX_MINOR$LIBEXT ] ; then
+        FOX_LIB_FOUND=1
+    elif [ -f $1/lib64/${LIBPREFIX}FOX-$FOX_MAJOR.$FOX_MINOR$DLLEXT ] ; then
+        FOX_LIB_FOUND=1
+    elif [ -f $1/lib64/${LIBPREFIX}FOX-$FOX_MAJOR.$FOX_MINOR$LIBEXT ] ; then
+        FOX_LIB_FOUND=1
+    else
+        FOX_LIB_FOUND=0
+    fi
+
+    if [ $FOX_LIB_FOUND -eq 0 ] ; then
+        echo -e " Check FOX Library   : \033[31mNot Found\033[0m"
+        return 0
+    fi
+
+    echo -e " Check FOX Library   : \033[32mFOUND\033[0m"
+    
+    # Find the Headers
+    #--------------------------------------------
+    if [ -f $1/include/fox-$FOX_MAJOR.$FOX_MINOR/fx.h ] ; then
+        FOX_INC_FOUND=1
+    fi
+
+    if [ $FOX_INC_FOUND -eq 0 ] ; then
+        echo -e " Check FOX Header    : \033[31mNot Found\033[0m"    
+        return 0
+    fi
+
+    if [ ! -x $1/bin/reswrap ] ; then
+        echo -e " Check Reswrap       : \033[31mNot Found\033[0m"
+        return 0
+    fi
+    
+    echo -e " Check Reswrap       : \033[32mFOUND\033[0m"
+ 
+
+    # Get compilation and link flags
+    #--------------------------------------------
+    FOX_CPPFLAGS=`$1/bin/fox-config --cflags`
+    FOX_LIB=`$1/bin/fox-config --libs`
+
+    # Set the correct compilation and link flags
+    #--------------------------------------------
+    CPPFLAGS="${CPPFLAGS} ${FOX_CPPFLAGS}"
+    LIBS="${LIBS} ${FOX_LIB}"
+    DEFS="${DEFS} -DFOX_BIGENDIAN=${BYTEORDER}"
+    export RESWRAP=$1/bin/reswrap
+
+    return 1
+}
+
+
+# Check if command line sets --fox-prefix
+#---------------------------------------------
 for arg in $*; do
     case $arg in
         --fox-prefix=*)
@@ -24,129 +124,35 @@ for arg in $*; do
     esac
 done
 
-FOXFOUND=1
 
-#----------------------------------------------------
-# find the fox-config
-#----------------------------------------------------
-if [ -x $FOX_PREFIX/bin/fox-config ] ; then
-  echo -e " Check FOX Config    : \033[32mFOUND\033[0m"
-elif [ -x $USER_PREFIX/bin/fox-config ] ; then
-  echo -e " Check FOX Config    : \033[32mFOUND\033[0m"
-  FOX_PREFIX="$USER_PREFIX"
-elif [ -x $LOCAL_PREFIX/bin/fox-config ] ; then
-  echo -e " Check FOX Config    : \033[32mFOUND\033[0m"
-  FOX_PREFIX="$LOCAL_PREFIX"
-else
-  echo -e " Check FOX Config    : \033[31mNot Found\033[0m"
-  FOXFOUND=0
-fi
-
-
-#----------------------------------------------------
-# no fox-config, check location of library
-#----------------------------------------------------
-if [ $FOXFOUND -eq 0 ] ; then
-  # Check for FOX Library
-  if [ -f $FOX_PREFIX/$LIBDIR/${LIBPREFIX}FOX-1.$FOX_MINOR$DLLEXT ] || [ -f $FOX_PREFIX/$LIBDIR/${LIBPREFIX}FOX-1.$FOX_MINOR$LIBEXT ]; then
-    echo -e " Check FOX Library   : \033[32mFOUND\033[0m"
-  elif [ -f $USER_PREFIX/$LIBDIR/${LIBPREFIX}FOX-1.$FOX_MINOR$DLLEXT ] || [ -f $USER_PREFIX/$LIBDIR/${LIBPREFIX}FOX-1.$FOX_MINOR$LIBEXT ]; then
-    echo -e " Check FOX Library   : \033[32mFOUND\033[0m"
-    FOX_PREFIX="$USER_PREFIX"
-  elif [ -f $LOCAL_PREFIX/$LIBDIR/${LIBPREFIX}FOX-1.$FOX_MINOR$DLLEXT ] || [ -f $LOCAL_PREFIX/$LIBDIR/${LIBPREFIX}FOX-1.$FOX_MINOR$LIBEXT ]; then
-    echo -e " Check FOX Library   : \033[32mFOUND\033[0m"
-    FOX_PREFIX="$LOCAL_PREFIX"
-  else
-    echo -e " Check FOX Library   : \033[31mNot Found\033[0m"
-    exit -1
-  fi
-fi
-
-
-
-#----------------------------------------------------
-# We should have found something here.
-# Setup FLAGS
-#----------------------------------------------------
-if [ ! -x $FOX_PREFIX/bin/fox-config ] ; then
-  echo -e " Unable to locate fox-config. Assuming FOX 1.2 is installed."
-  echo -e " As of FOX 1.2.11 this file is not automatically installed in your PATH. "
-  echo -e " If you run into any problems try copying fox-config from the fox-1.2
-  echo -e " source directory to your PATH and rerun goggles build.
-  echo -e " All latest versions of FOX 1.2 and FOX 1.3 should have fox-config"
-  echo -e " Trying to build it anyway..."
-
-  FOX_LIB="-L$FOX_PREFIX/${LIBDIR} -lFOX-${FOX_MAJOR}.${FOX_MINOR}"
-  FOX_INCLUDE="-I$FOX_PREFIX/include/fox-${FOX_MAJOR}.${FOX_MINOR}"
-  export RESWRAP="${FOX_PREFIX}/bin/reswrap"
-else
-  FOX_VERSION=`$FOX_PREFIX/bin/fox-config --version`
-  FOX_MAJOR=`echo "${FOX_VERSION}" | cut -d. -f1`
-  FOX_MINOR=`echo "${FOX_VERSION}" | cut -d. -f2`
-  FOX_RELEASE=`echo "${FOX_VERSION}" | cut -d. -f3`
-  FOX_DEP_LIB=`$FOX_PREFIX/bin/fox-config --libs`
-  FOX_LIB="-L$FOX_PREFIX/lib ${FOX_DEP_LIB} -lFOX-1.$FOX_MINOR"
-  FOX_INCLUDE="-I$FOX_PREFIX/include/fox-1.$FOX_MINOR"
-  export RESWRAP="${FOX_PREFIX}/bin/reswrap"
-
-  # Check for FOX Library
-  if [ -f $FOX_PREFIX/$LIBDIR/libFOX-$FOX_MAJOR.$FOX_MINOR$DLLEXT ] || [ -f $FOX_PREFIX/$LIBDIR/libFOX-$FOX_MAJOR.$FOX_MINOR$LIBEXT ]; then
-    echo -e " Check FOX Library   : \033[32mFOUND\033[0m"
-  else
-    echo -e " Check FOX Library   : \033[31mNot Found\033[0m"
-    exit -1
-  fi
-
-  # Check version
-  if [ $FOX_MAJOR -eq $MIN_FOX_MAJOR ] && [ $FOX_MINOR -ge $MIN_FOX_MINOR ] ; then
-    echo -e " Check FOX version   : \033[32m${FOX_VERSION}\033[0m"
-  else
-    echo -e " Check FOX version   : \033[31m${FOX_VERSION}\033[0m (Please install latest FOX $MIN_FOX_MAJOR.$MIN_FOX_MINOR.x release)"
-    exit -1
-  fi
-fi
-
-
-# Check for FOX Header Files
-if [ -f $FOX_PREFIX/include/fox-1.$FOX_MINOR/fx.h ] ; then
-  echo -e " Check FOX Header    : \033[32mFOUND\033[0m"
-else
-  echo -e " Check FOX Header    : \033[31mNot Found\033[0m"
-  exit -1
-fi
-
-CPPFLAGS="${CPPFLAGS} ${FOX_INCLUDE}"
-LIBS="${LIBS} ${FOX_LIB}"
-DEFS="${DEFS} -DFOX_BIGENDIAN=${BYTEORDER}"
+# Where in the universe is FOX ?
 #-------------------------------------------------------------------------------
+if [ -n "$FOX_PREFIX" ] ; then 
+    echo 
+
+    fox_check_in_prefix $FOX_PREFIX
+    if [ $? -eq 0 ] ; then
+    	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+        echo " Unable to find a compatible FOX library installation. Please make"
+        echo " sure the correct version is installed including the header files."
+        echo " You can use the \"--fox-prefix\" option to search in an"
+        echo " alternative installation directory."
+        exit -1                  
+    fi
+else
+    fox_check_in_prefix "/usr"
+    if [ $? -eq 0 ] ; then
+        fox_check_in_prefix "/usr/local"
+        if [ $? -eq 0 ] ; then
+        	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+            echo " Unable to find a compatible FOX library installation. Please make"
+            echo " sure the correct version is installed including the header files."
+            echo " You can use the \"--fox-prefix\" option to search in an"
+            echo " alternative installation directory."
+            exit -1
+        fi    
+    fi
+	echo " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
 fi
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fi

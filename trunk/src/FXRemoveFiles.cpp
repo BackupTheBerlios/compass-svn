@@ -21,10 +21,29 @@
 
 FXRemoveFiles::FXRemoveFiles(FXObject * tgt,FXSelector sel,FXStringList & f) : FXTransfer(tgt,sel),files(f),ignore(FALSE) {
   }
+void FXRemoveFiles::send_filename(const FXString & filename){
+  FXMutexLock lock(mutex_status);
+  status_info.code   =STATUS_INFORMATION;
+  status_info.srcfile=filename;
+//  status_info.dstfile=filename;
+/*
+  status_info.total  =size;
+  if (size<=65536)
+    status_info.current=size;
+  else
+    status_info.current=0;
+*/
+  status_info.num++;
+  notify();
+  }
+
 
 FXbool FXRemoveFiles::remove(const FXString& path){
   FXbool result;
   FXStat stat;
+
+  send_filename(path);
+
   result = FXStat::statLink(path,stat);
   if (!result)
     result = FXStat::statFile(path,stat);

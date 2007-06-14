@@ -145,7 +145,9 @@ FXDEFMAP(FXFileManager) FXFileManagerMap[]={
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_GO_FORWARD,FXFileManager::onCmdForwardHistory),
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_GO_BACK,FXFileManager::onCmdBackHistory),
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_GO_UP,FXFileManager::onCmdGoUp),
+  FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_GO_BOOKMARK,FXFileManager::onCmdGoBookmark),
 
+  FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_ADD_BOOKMARK,FXFileManager::onCmdAddBookmark),
 
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_PROPERTIES,FXFileManager::onCmdProperties),
   FXMAPFUNC(SEL_COMMAND,FXFileManager::ID_DUP_WINDOW,FXFileManager::onCmdDuplicateWindow),
@@ -189,6 +191,10 @@ FXIMPLEMENT(FXFileManager,FXMainWindow,FXFileManagerMap,ARRAYNUMBER(FXFileManage
 FXFileManager::FXFileManager(FXFileApplication * app) : FXMainWindow(app,ApplicationTitle,app->icon_folder,app->icon_folder_big,DECOR_ALL,0,0,500,400){
   fileview=NULL;
   attachfileview=false;
+  bookmarks.setTarget(this);
+  bookmarks.setSelector(ID_GO_BOOKMARK);
+  bookmarks.setMaxFiles(10);
+  bookmarks.setGroupName("bookmarks");
   initUserInterface();
   }
 
@@ -196,6 +202,10 @@ FXFileManager::FXFileManager(FXFileApplication * app) : FXMainWindow(app,Applica
 FXFileManager::FXFileManager(FXFileApplication * app,FXFileView * v) : FXMainWindow(app,ApplicationTitle,app->icon_folder,app->icon_folder_big,DECOR_ALL,0,0,500,400){
   fileview=v;
   fileview_delegator.setDelegate(fileview);
+  bookmarks.setTarget(this);
+  bookmarks.setSelector(ID_GO_BOOKMARK);
+  bookmarks.setMaxFiles(10);
+  bookmarks.setGroupName("bookmarks");
   attachfileview=true;
   initUserInterface();
   }
@@ -259,7 +269,21 @@ void FXFileManager::initUserInterface() {
   // View Menu
   bookmarkmenu=new FXMenuPane(this);
   new FXMenuTitle(menubar,"&Bookmarks",NULL,bookmarkmenu);
-  new FXMenuCommand(bookmarkmenu,"Add Bookmark\tCtrl-B\tAdd bookmark for the current directory.",NULL);
+  new FXMenuCommand(bookmarkmenu,"Add Bookmark\tCtrl-B\tAdd bookmark for the current directory.",NULL,this,ID_ADD_BOOKMARK);
+  FXMenuSeparator * sep = new FXMenuSeparator(bookmarkmenu);
+  sep->setTarget(&bookmarks);
+  sep->setSelector(FXRecentFiles::ID_ANYFILES);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_1);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_2);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_3);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_4);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_5);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_6);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_7);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_8);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_9);
+  new FXMenuCommand(bookmarkmenu,FXString::null,NULL,&bookmarks,FXRecentFiles::ID_FILE_10);
+
 
   sortmenu=new FXMenuPane(this);
   new FXMenuRadio(sortmenu,"By Name",&fileview_delegator,FXFileList::ID_SORT_BY_NAME);
@@ -659,7 +683,6 @@ void FXFileManager::view(const FXString & url,FXViewSource src) {
     location->setText(fileview->url());
     return;
     }  
-    
 
   if (src!=FROM_HISTORY)
     fileview->history().append(url);
@@ -820,6 +843,7 @@ long FXFileManager::onCmdAbout(FXObject*,FXSelector,void*){
 
 
 long FXFileManager::onCmdGoUp(FXObject*,FXSelector,void*){
+  FXString name=FXPath::name(fileview->url());
   FXString url;
   if (FXStat::isDirectory(fileview->url()))
     url = FXPath::upLevel(fileview->url());
@@ -827,6 +851,8 @@ long FXFileManager::onCmdGoUp(FXObject*,FXSelector,void*){
     url = FXPath::directory(fileview->url());
 
   view(url,FROM_BOOKMARKS);
+
+  fileview->selectFile(name);
   return 1;
   }
 
@@ -834,6 +860,29 @@ long FXFileManager::onCmdGoHome(FXObject*,FXSelector,void*){
   view(FXSystem::getHomeDirectory(),FROM_BOOKMARKS);
   return 1;
   }
+
+long FXFileManager::onCmdGoBookmark(FXObject*,FXSelector,void*filename){
+  if (!FXStat::exists((const char*)filename)){
+    if (FXMessageBox::question(this,MBOX_YES_NO,"Bookmark Error","The bookmark \"%s\" doesn't appear to exist. Would you like to remove it?",(const char*)filename)==MBOX_CLICKED_YES)
+      bookmarks.removeFile((const char*)filename);
+    return 1;
+    }
+
+  view((const char*)filename,FROM_BOOKMARKS);     
+  return 1;
+  }
+
+
+long FXFileManager::onCmdAddBookmark(FXObject*,FXSelector,void*){
+  if (FXStat::isDirectory(fileview->url())) {
+    bookmarks.appendFile(fileview->url());
+    }
+  else {
+    getApp()->beep();
+    }
+  return 1;
+  }
+
 
 long FXFileManager::onCmdClearLocation(FXObject*,FXSelector,void*){
   location->setText(FXString::null);
@@ -934,7 +983,7 @@ long FXFileManager::onCmdCut(FXObject*,FXSelector,void*){
   FXDragType types[3]={FXFileApplication::me->kde_clipboard,FXFileApplication::me->gnome_clipboard,urilistType};
   if (acquireClipboard(types,3)){
     fileview->getClipboardSelection(clipboard);
-    clipboard_cut=false;
+    clipboard_cut=true;
     }
   else {
     getApp()->beep();
