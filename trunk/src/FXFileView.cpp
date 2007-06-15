@@ -26,6 +26,8 @@
 FXDEFMAP(FXFileView) FXFileViewMap[]={
   FXMAPFUNC(SEL_SELECTED,FXFileView::ID_FILELIST,FXFileView::onFileListSelected),
   FXMAPFUNC(SEL_DESELECTED,FXFileView::ID_FILELIST,FXFileView::onFileListDeselected),
+  FXMAPFUNC(SEL_COMMAND,FXFileView::ID_FILELIST,FXFileView::onFileListSelection),
+//  FXMAPFUNC(SEL_CHANGED,FXFileView::ID_FILELIST,FXFileView::onFileListSelection),
   FXMAPFUNC(SEL_DOUBLECLICKED,FXFileView::ID_FILELIST,FXFileView::onFileListDoubleClick),
   FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,FXFileView::ID_FILELIST,FXFileView::onFileListRightClick),
   FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,FXFileView::ID_DIRLIST,FXFileView::onDirListRightClick),
@@ -77,15 +79,17 @@ FXFileView::~FXFileView(){
   imageview=NULL;
   }
 
-void FXFileView::update(){
+void FXFileView::update(FXIcon * icon){
   filelist->scan(TRUE);
+  dirlist->scan(TRUE);
+  current_icon=icon;
   }
 
 void FXFileView::selectFile(const FXString & file){
   for (FXint i=0;i<filelist->getNumItems();i++){
     if (filelist->getItemFilename(i)==file){
-      filelist->selectItem(i,TRUE);
-      filelist->setCurrentItem(i);
+      filelist->selectItem(i,true);
+      filelist->setCurrentItem(i,true);
       filelist->makeItemVisible(i);
       break;
       }
@@ -120,9 +124,19 @@ void FXFileView::view(const FXString & url,FXIcon * ic,bool preview){
     filelist->setDirectory(url);
     dirlist->setDirectory(url);
     }
+
   current_url =url;
   current_icon=ic;
   num_selected=0;
+
+/*
+  if (FXFileApplication::me->filePropertiesShown()) {
+    FXStringList files;
+    getSelection(files);
+    FXFileApplication::me->showFileProperties(files);
+    }
+*/
+
   }
 
 void FXFileView::preview(FXImage * image){
@@ -173,7 +187,6 @@ bool FXFileView::previewShown() const {
 
 
 
-
 void FXFileView::saveSettings(const FXString & key) const {
 #if FOX_MINOR == 6
   FXuint style = filelist->getListStyle();
@@ -190,6 +203,9 @@ void FXFileView::saveSettings(const FXString & key) const {
     getApp()->reg().writeUnsignedEntry(key.text(),"filelist-view-arrangement",0);
 
   getApp()->reg().writeUnsignedEntry(key.text(),"show-directory-tree",dirframe->shown());
+
+  getApp()->reg().writeUnsignedEntry(key.text(),"filelist-show-parent-directories",filelist->showParents());
+
 #else
   FXuint style = filelist->getListStyle();
   if (style&ICONLIST_MINI_ICONS)
@@ -204,7 +220,10 @@ void FXFileView::saveSettings(const FXString & key) const {
   else
     getApp()->reg().writeUIntEntry(key.text(),"filelist-view-arrangement",0);
 
-  getApp()->reg().writeUIntEntry(key.text(),"show-directory-tree",dirframe->shown());
+  getApp()->reg().writeBoolEntry(key.text(),"show-directory-tree",dirframe->shown());
+
+  getApp()->reg().writeBoolEntry(key.text(),"filelist-show-parent-directories",filelist->showParents());
+
 #endif
   getApp()->reg().writeIntEntry(key.text(),"directory-tree-width",getSplit(0));
   }
@@ -241,6 +260,7 @@ void FXFileView::loadSettings(const FXString & key) {
   filelist->showHiddenFiles(showhiddenfiles);
   dirlist->showHiddenFiles(showhiddenfiles);
     
+  filelist->showParents(getApp()->reg().readBoolEntry(key.text(),"filelist-show-parent-directories",false));
 
 
   }
@@ -267,6 +287,16 @@ long FXFileView::onFileListSelected(FXObject*,FXSelector,void*ptr){
 
 long FXFileView::onFileListDeselected(FXObject*,FXSelector,void*ptr){
   if (num_selected>0) num_selected--;
+  return 1;
+  }
+
+long FXFileView::onFileListSelection(FXObject*,FXSelector,void*ptr){
+  fxmessage("Selection Changed %d\n",getNumSelected());
+  if (FXFileApplication::me->filePropertiesShown()) {
+    FXStringList files;
+    getSelection(files);
+    FXFileApplication::me->showFileProperties(url(),files);
+    }
   return 1;
   }
 

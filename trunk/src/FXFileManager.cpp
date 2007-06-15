@@ -24,7 +24,6 @@
 #include <fxkeys.h>
 #include "FXFileApplication.h"
 #include "FXFileManager.h"
-#include "FXFileProperties.h"
 #include "FXHistory.h"
 #include "FXURLBox.h"
 #include "FXFileView.h"
@@ -78,6 +77,7 @@ FXString display_bytes(FXulong bytes) {
 
 
 
+
 void show_header(FXComposite *p,const FXString & title,const FXString & subtitle,FXIcon * icon){
   FXFileApplication * app = dynamic_cast<FXFileApplication*>(FXApp::instance());
   FXint spacing=15;
@@ -110,7 +110,7 @@ FXDEFMAP(FXFileManager) FXFileManagerMap[]={
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_GO_BACK,FXFileManager::onUpdBackHistory),
 
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_DELETE,FXFileManager::onUpdHasSelection),
-  FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_PROPERTIES,FXFileManager::onUpdHasSelection),
+//  FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_PROPERTIES,FXFileManager::onUpdHasSelection),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_EDIT,FXFileManager::onUpdHasSelection),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_RENAME,FXFileManager::onUpdRename),
   FXMAPFUNC(SEL_UPDATE,FXFileManager::ID_REPLACE,FXFileManager::onUpdReplace),
@@ -316,6 +316,16 @@ void FXFileManager::initUserInterface() {
   new FXMenuRadio(viewmenu,"Arrange by Rows",&fileview_delegator,FXFileList::ID_ARRANGE_BY_ROWS);
   new FXSeparator(viewmenu);
   new FXMenuCascade(viewmenu,"Sort Files",NULL,sortmenu);
+
+ // View Menu
+  FXMenuPane * thememenu=new FXMenuPane(this);
+  new FXMenuTitle(menubar,"&Theme",NULL,thememenu);
+  new FXMenuRadio(thememenu,"0",FXFileApplication::me,FXFileApplication::ID_ICON_THEME_1);
+  new FXMenuRadio(thememenu,"0",FXFileApplication::me,FXFileApplication::ID_ICON_THEME_2);
+  new FXMenuRadio(thememenu,"0",FXFileApplication::me,FXFileApplication::ID_ICON_THEME_3);
+  new FXMenuRadio(thememenu,"0",FXFileApplication::me,FXFileApplication::ID_ICON_THEME_4);
+  new FXMenuRadio(thememenu,"0",FXFileApplication::me,FXFileApplication::ID_ICON_THEME_5);
+  new FXMenuRadio(thememenu,"0",FXFileApplication::me,FXFileApplication::ID_ICON_THEME_6);
 
   // View Menu
   windowmenu=new FXMenuPane(this);
@@ -525,6 +535,25 @@ void FXFileManager::createTab(bool initialtabonly) {
   tabitem->create();
   }
 
+
+void FXFileManager::scan() {
+  if (tabbook) {
+    for (int i=0;i<tabbook->numChildren()/2;i++) {
+      updateTab(i);
+      }
+    }
+  else {
+
+    if (FXStat::isDirectory(fileview->url())) 
+      fileview->update(FXFileApplication::me->getIconForDirectory(fileview->url()));
+    else
+      fileview->update(FXFileApplication::me->getIconForFile(fileview->url()));
+      
+    location->setText(fileview->url());
+    location->setIcon(fileview->icon());
+    }
+  }
+
 void FXFileManager::closeTab(FXint tab){
   if (!tabbook) return;
 
@@ -579,6 +608,22 @@ void FXFileManager::updateActiveTab(FXint tab) {
   }
 
 
+void FXFileManager::updateTab(FXint tab){
+  FXTabItem * ti = dynamic_cast<FXTabItem*>(tabbook->childAtIndex(tab*2));
+  FXFileView* fv = dynamic_cast<FXFileView*>(tabbook->childAtIndex((tab*2)+1)->childAtIndex(1));
+  if (FXStat::isDirectory(fileview->url())) 
+    fileview->update(FXFileApplication::me->getIconForDirectory(fv->url()));
+  else
+    fileview->update(FXFileApplication::me->getIconForFile(fv->url()));
+
+  if (fv==fileview) {
+    location->setText(fv->url());
+    location->setIcon(fv->icon());
+    }
+  ti->setText(fv->url());
+  ti->setIcon(fv->icon());
+  }
+
 void FXFileManager::setTabLabel(FXTabItem * item,const FXString & url,FXIcon * icon){
   if (item){
 //    FXString name = FXPath::name(url);
@@ -593,6 +638,7 @@ void FXFileManager::setTabLabel(FXTabItem * item,const FXString & url,FXIcon * i
   Update All GUI Items based on the new URL
 */
 void FXFileManager::updateView(const FXString & url,FXIcon * icon,bool do_preview) {
+  FXString old = fileview->url();
 
   fileview->view(url,icon,do_preview);
 
@@ -645,7 +691,9 @@ void FXFileManager::updateView(const FXString & url,FXIcon * icon,bool do_previe
   /// Update the Window Title
   //setTitle(FXPath::name(url)+" - "+ApplicationTitle);
 
-
+  if (FXPath::directory(old)==url) {
+    fileview->selectFile(FXPath::name(old));
+    }
 
   statusbar->getStatusLine()->setNormalText(FXStringFormat("Available Disk Space: %s",display_bytes(getAvailableDiskSpace(url)).text()));
   }
@@ -664,7 +712,7 @@ void FXFileManager::view(const FXString & url,FXViewSource src) {
         FXFileApplication::me->createWindow(url);
         return; // We're done here. New Window should take care of things
         }
-      }
+      }      
     icon = FXFileApplication::me->getIconForDirectory(url);
     dirwritable = isWritable(url);
     }
@@ -863,7 +911,6 @@ long FXFileManager::onCmdAbout(FXObject*,FXSelector,void*){
 
 
 long FXFileManager::onCmdGoUp(FXObject*,FXSelector,void*){
-  FXString name=FXPath::name(fileview->url());
   FXString url;
   if (FXStat::isDirectory(fileview->url()))
     url = FXPath::upLevel(fileview->url());
@@ -871,8 +918,6 @@ long FXFileManager::onCmdGoUp(FXObject*,FXSelector,void*){
     url = FXPath::directory(fileview->url());
 
   view(url,FROM_BOOKMARKS);
-
-  fileview->selectFile(name);
   return 1;
   }
 
@@ -1033,7 +1078,10 @@ void FXFileManager::pasteFiles(const FXString & destination){
   FXuint num;
   FXDragType * types;
 
-  if (!inquireDNDTypes(FROM_CLIPBOARD,types,num)) return;
+  if (!inquireDNDTypes(FROM_CLIPBOARD,types,num)) {
+    getApp()->beep();
+    return;
+    }
 
   for (FXuint i=0;i<num;i++){
     if (types[i]==FXFileApplication::me->kde_clipboard)
@@ -1294,7 +1342,7 @@ long FXFileManager::onCmdRename(FXObject*,FXSelector sel,void*){
         success=true;
       }
     if (success) {
-      fileview->update();
+//      fileview->update();
       if (FXSELID(sel)==ID_RENAME)
         fileview->selectFile(field->getText());
       }
@@ -1373,10 +1421,7 @@ long FXFileManager::onUpdNewFolder(FXObject*sender,FXSelector,void*){
 long FXFileManager::onCmdProperties(FXObject*,FXSelector,void*){
   FXStringList list;
   fileview->getSelection(list);
-  FXFileProperties dialog(this,list,TRUE);
-  if (dialog.execute(PLACEMENT_OWNER)) {
-    fileview->update();
-    }
+  FXFileApplication::me->showFileProperties(fileview->url(),list);
   return 1;
   }
 

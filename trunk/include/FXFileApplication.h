@@ -27,15 +27,18 @@ enum FXOpenMode {
 
 
 class FXFileView;
+class FXFileProperties;
 
 class FXFileApplication : public FXApp {
   FXDECLARE(FXFileApplication)
 friend class FXFileManager;
 protected:
-  FXFileDict * associations;
+  FXFileDict       * associations;
+  FXFileProperties * fileproperties;
 protected:
   FXOpenMode diropenmode;
   FXOpenMode previewopenmode;
+  FXint      icontheme;
 public:
   FXIcon * applogo;
   FXIcon * icon_about;
@@ -82,20 +85,28 @@ public:
   FXDragType gnome_dragndrop;
 protected:
   void createIcons();
-  void destroyIcons();
+  void destroyIcons();  
+  void changeTheme(FXint t);
 public:
   enum {
     ID_NEW_WINDOW=FXApp::ID_LAST,
     ID_CHILD,
     ID_DDE,
+    ID_ICON_THEME_1,
+    ID_ICON_THEME_2,
+    ID_ICON_THEME_3,
+    ID_ICON_THEME_4,
+    ID_ICON_THEME_5,
+    ID_ICON_THEME_6,
     ID_LAST
     };
 public:
   long onCmdNewWindow(FXObject*,FXSelector,void*);
   long onCmdDuplicateWindow(FXObject*,FXSelector,void*);
+  long onCmdIconTheme(FXObject*,FXSelector,void*);
+  long onUpdIconTheme(FXObject*,FXSelector,void*);
   long onChildSignal(FXObject*,FXSelector,void*);
   long onDDE(FXObject*,FXSelector,void*);
-
 public:
   static FXFileApplication * me;
 public:
@@ -108,6 +119,10 @@ public:
   void createWindow(FXFileView * view);
   
   void createWindow(FXTabBook * tabbook);
+
+  void showFileProperties(const FXString & url,const FXStringList & filelist);
+
+  FXbool filePropertiesShown() const;
 
   void registerDDE(FXFile * dde);
 

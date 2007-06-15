@@ -27,12 +27,163 @@
 #include "FXFileApplication.h"
 #include "FXFileDictEx.h"
 #include "FXFileView.h"
+#include "FXFileProperties.h"
 #include "icons.h"
 
+
+
+
+struct IconTheme {
+  const char * themename;
+  const char * iconpath;     
+  const char * big;         
+  const char * small;       
+  const char * executable;  
+  const char * folder;      
+  const char * folder_open; 
+  const char * folder_home;   
+  const char * folder_desktop; 
+  const char * file;
+  };        
+
+
+static IconTheme iconthemes[]={ 
+
+  // The Default Theme
+  { 
+    "Default", /// Theme Name
+    NULL, /// Icon Path
+    NULL, /// Big
+    NULL, /// Small
+    NULL, /// Executable
+    NULL, /// Folder 
+    NULL, /// Folder Open
+    NULL, /// Folder Home
+    NULL, /// Folder Desktop
+    NULL /// File
+  },
+
+  // The GNOME theme  
+  {
+    
+    "Gnome", /// Theme Name
+    "/usr/share/icons/gnome", /// Icon Path
+    "48x48/", /// Big
+    "16x16/", /// Small
+    "mimetypes/gnome-mime-application-x-executable.png", /// Executable
+    "filesystems/gnome-fs-directory.png", /// Folder 
+    NULL, /// Folder Open
+    "filesystems/gnome-fs-home.png", /// Folder Home
+    "filesystems/gnome-fs-directory.png", /// Folder Desktop
+    "filesystems/gnome-fs-regular.png" /// File   
+  },
+
+  // Tango
+  {
+    "Tango", /// Theme Name
+    "/usr/share/icons/Tango", /// Icon Path
+    "32x32/", /// Big
+    "16x16/", /// Small
+    "mimetypes/application-x-executable.png", /// Executable
+    "places/folder.png", /// Folder 
+    NULL, /// Folder Open
+    "places/user-home.png", /// Folder Home
+    "places/user-desktop.png", /// Folder Desktop
+    "mimetypes/text-x-generic.png" /// File   
+  },
+
+
+  // KDE Classic
+  {
+    "KDE Classic", /// Theme Name
+    "/usr/share/icons/kdeclassic", /// Icon Path
+    "32x32/", /// Big
+    "16x16/", /// Small
+    "filesystems/exec.png", /// Executable
+    "filesystems/folder.png", /// Folder 
+    "filesystems/folder_open.png", /// Folder Open
+    "filesystems/folder_home.png", /// Folder Home
+    "filesystems/desktop.png", /// Folder Desktop
+    "mimetypes/empty.png" /// File   
+  },
+
+  // Crystal SVG
+  {
+    "Crystal SVG", /// Theme Name
+    "/usr/share/icons/crystalsvg", /// Icon Path
+    "32x32/", /// Big
+    "16x16/", /// Small
+    "filesystems/exec.png", /// Executable
+    "filesystems/folder.png", /// Folder 
+    "filesystems/folder_open.png", /// Folder Open
+    "filesystems/folder_home.png", /// Folder Home
+    "filesystems/desktop.png", /// Folder Desktop
+    "mimetypes/empty.png" /// File   
+  }
+
+};
+
+
+inline static void assoc_exact(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon) {
+  FXString value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  dict->replace(key,value.text());
+  }
+
+inline static void assoc_exact(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon,const char * icon_open) {
+  FXString value = FXStringFormat(";%s;%s%s:%s%s;%s%s:%s%s;%s",description,theme.big,icon,theme.big,icon_open,theme.small,icon,theme.small,icon_open,mime);
+  dict->replace(key,value.text());
+  }
+
+inline static void assoc(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon) {
+  FXString value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  dict->replace(key,value.text());
+  dict->replace(FXString(key).upper().text(),value.text());
+  }
+
+inline static void assoc(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon,const char * icon_open) {
+  FXString value = FXStringFormat(";%s;%s%s:%s%s;%s%s:%s%s;%s",description,theme.big,icon,theme.big,icon_open,theme.small,icon,theme.small,icon_open,mime);
+  dict->replace(key,value.text());
+  dict->replace(FXString(key).upper().text(),value.text());
+  }
+
+
+void initAssociations(FXFileDict * dict, const IconTheme & theme) {
+  fxmessage("IconPath: %s\n",theme.iconpath);
+  dict->setIconPath(theme.iconpath);
+
+  assoc_exact(dict,theme,FXFileDict::defaultExecBinding,"","",theme.executable);
+  if (theme.folder_open)
+    assoc_exact(dict,theme,FXFileDict::defaultDirBinding,"","",theme.folder,theme.folder_open);
+  else
+    assoc_exact(dict,theme,FXFileDict::defaultDirBinding,"","",theme.folder);
+
+  assoc_exact(dict,theme,FXFileDict::defaultFileBinding,"","",theme.file);
+  assoc_exact(dict,theme,FXSystem::getHomeDirectory().text(),"","",theme.folder_home);
+  assoc_exact(dict,theme,FXString(FXSystem::getHomeDirectory()+PATHSEPSTRING+"Desktop").text(),"","",theme.folder_desktop);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 FXDEFMAP(FXFileApplication) FXFileApplicationMap[]={
-  FXMAPFUNC(SEL_COMMAND,FXFileApplication::ID_NEW_WINDOW,FXFileApplication::onCmdNewWindow),
-  FXMAPFUNC(SEL_SIGNAL,FXFileApplication::ID_CHILD,FXFileApplication::onChildSignal),
-  FXMAPFUNC(SEL_IO_READ,FXFileApplication::ID_DDE,FXFileApplication::onDDE),
+  FXMAPFUNCS(SEL_COMMAND,FXFileApplication::ID_ICON_THEME_1,FXFileApplication::ID_ICON_THEME_6,FXFileApplication::onCmdIconTheme),
+  FXMAPFUNCS(SEL_UPDATE, FXFileApplication::ID_ICON_THEME_1,FXFileApplication::ID_ICON_THEME_6,FXFileApplication::onUpdIconTheme),
+  FXMAPFUNC(SEL_COMMAND, FXFileApplication::ID_NEW_WINDOW,FXFileApplication::onCmdNewWindow),
+  FXMAPFUNC(SEL_SIGNAL,  FXFileApplication::ID_CHILD,FXFileApplication::onChildSignal),
+  FXMAPFUNC(SEL_IO_READ, FXFileApplication::ID_DDE,FXFileApplication::onDDE),
   };
 
 
@@ -41,7 +192,7 @@ FXIMPLEMENT(FXFileApplication,FXApp,FXFileApplicationMap,ARRAYNUMBER(FXFileAppli
 FXFileApplication * FXFileApplication::me=NULL;
 
 
-FXFileApplication::FXFileApplication() : FXApp("fxfilemanager") {
+FXFileApplication::FXFileApplication() : FXApp("fxfilemanager"), icontheme(0),fileproperties(NULL) {
   me=this;
   }
 
@@ -78,6 +229,8 @@ void FXFileApplication::init(int& argc,char** argv,FXbool connect){
   diropenmode     = (FXOpenMode) reg().readUIntEntry("settings","directory-open-mode",OPEN_IN_CURRENT);
 #endif
 
+  
+  //initAssociations(associations,iconthemes[2]);
   }
 
 
@@ -85,6 +238,170 @@ FXFileApplication::~FXFileApplication(){
   destroyIcons();
   removeSignal(SIGCHLD);
   }
+
+    
+
+
+
+
+/*
+ GNOME
+  const FXchar * big            = "48x48/mimetypes/";
+  const FXchar * small          = "16x16/mimetypes/";
+  const FXchar * bigfs          = "48x48/filesystems/";
+  const FXchar * smallfs        = "16x16/filesystems/";
+
+  const FXchar * mime_image     = "gnome-mime-image.png";
+  const FXchar * mime_text      = "gnome-mime-text.png";
+  const FXchar * mime_text_html = "gnome-mime-text-html.png";
+
+  const FXchar * mime_text_c      = "gnome-mime-text-x-csrc.png";
+  const FXchar * mime_text_cpp    = "gnome-mime-text-x-c++src.png";
+  const FXchar * mime_text_h      = "gnome-mime-text-x-c-header.png";
+  const FXchar * mime_text_copy   = "gnome-mime-text-x-copying.png";
+  const FXchar * mime_text_readme = "gnome-mime-text-x-readme.png";
+  const FXchar * mime_app_object  = "gnome-mime-application-x-object.png";
+
+  const FXchar * default_exec     = "gnome-mime-application-x-executable.png";
+  const FXchar * default_file     = "gnome-fs-regular.png";
+  const FXchar * default_dir      = "gnome-fs-directory.png";
+  const FXchar * home_dir         = "gnome-fs-home.png";
+  const FXchar * desktop_dir      = "gnome-fs-desktop.png";
+
+
+  associations->setIconPath("/usr/share/icons/gnome");
+*/
+
+
+
+
+  /* TANGO */
+/*
+  const FXchar * big            = "32x32/";
+  const FXchar * small          = "16x16/";
+
+  const FXchar * mime_image     = "mimetypes/image-x-generic.png";
+  const FXchar * mime_text      = "mimetypes/text-x-generic.png";
+  const FXchar * mime_text_html = "mimetypes/text-html.png";
+
+  const FXchar * mime_text_c      = "mimetypes/text-x-generic.png";
+  const FXchar * mime_text_cpp    = "mimetypes/text-x-generic.png";
+  const FXchar * mime_text_h      = "mimetypes/text-x-generic.png";
+  const FXchar * mime_text_copy   = "mimetypes/text-x-generic.png";
+  const FXchar * mime_text_readme = "mimetypes/text-x-generic.png";
+  const FXchar * mime_app_object  = "mimetypes/text-x-generic.png";
+
+  const FXchar * default_exec     = "mimetypes/application-x-executable.png";
+  const FXchar * default_file     = "mimetypes/text-x-generic.png";
+  const FXchar * default_dir      = "places/folder.png";
+  const FXchar * home_dir         = "places/user-home.png";
+  const FXchar * desktop_dir      = "places/user-desktop.png";
+
+
+  associations->setIconPath("/usr/share/icons/Tango");
+*/
+
+/* KDE classic */
+/*
+  const FXchar * big            = "32x32/";
+  const FXchar * small          = "16x16/";
+
+  const FXchar * mime_image     = "mimetypes/image.png";
+  const FXchar * mime_text      = "mimetypes/txt.png";
+  const FXchar * mime_text_html = "mimetypes/html.png";
+
+  const FXchar * mime_text_c      = "mimetypes/source_c.png";
+  const FXchar * mime_text_cpp    = "mimetypes/source_cpp.png";
+  const FXchar * mime_text_h      = "mimetypes/source_h.png";
+  const FXchar * mime_text_copy   = "mimetypes/info.png";
+  const FXchar * mime_text_readme = "mimetypes/readme.png";
+  const FXchar * mime_app_object  = "mimetypes/source_o.png";
+
+  const FXchar * default_exec     = "filesystems/exec.png";
+  const FXchar * default_file     = "mimetypes/empty.png";
+  const FXchar * default_dir      = "filesystems/folder.png";
+  const FXchar * default_dir_open = "filesystems/folder_open.png";
+  const FXchar * home_dir         = "filesystems/folder_home.png";
+  const FXchar * desktop_dir      = "filesystems/desktop.png";
+
+
+  associations->setIconPath("/usr/share/icons/kdeclassic");
+*/
+#if 0
+
+  const FXchar * big            = "32x32/";
+  const FXchar * small          = "16x16/";
+
+  const FXchar * mime_image     = "mimetypes/image.png";
+  const FXchar * mime_text      = "mimetypes/txt.png";
+  const FXchar * mime_text_html = "mimetypes/html.png";
+
+  const FXchar * mime_text_c      = "mimetypes/source_c.png";
+  const FXchar * mime_text_cpp    = "mimetypes/source_cpp.png";
+  const FXchar * mime_text_h      = "mimetypes/source_h.png";
+  const FXchar * mime_text_copy   = "mimetypes/info.png";
+  const FXchar * mime_text_readme = "mimetypes/readme.png";
+  const FXchar * mime_app_object  = "mimetypes/source_o.png";
+
+  const FXchar * default_exec     = "filesystems/exec.png";
+  const FXchar * default_file     = "mimetypes/empty.png";
+  const FXchar * default_dir      = "filesystems/folder.png";
+  const FXchar * default_dir_open = "filesystems/folder_open.png";
+  const FXchar * home_dir         = "filesystems/folder_home.png";
+  const FXchar * desktop_dir      = "filesystems/desktop.png";
+
+  associations->setIconPath("/usr/share/icons/crystalsvg");
+
+
+
+  makeAssociation(FXFileDict::defaultExecBinding,"","",default_exec,big,small);
+  makeAssociation(FXFileDict::defaultDirBinding,"","",default_dir,default_dir_open,big,small);
+  makeAssociation(FXFileDict::defaultFileBinding,"","",default_file,big,small);
+  makeAssociation(FXSystem::getHomeDirectory().text(),"","",home_dir,big,small);
+  makeAssociation(FXString(FXSystem::getHomeDirectory()+PATHSEPSTRING+"Desktop").text(),"","",desktop_dir,big,small);
+
+
+  makeAssociation("htm","HTML File","text/html",mime_text_html,big,small);
+  makeAssociation("html","HTML File","text/html",mime_text_html,big,small);
+  makeAssociation("txt","Text File","text/plain",mime_text,big,small);
+
+  makeAssociation("c","C Source","text/plain",mime_text_c,big,small);
+  makeAssociation("cpp","C++ Source","text/plain",mime_text_cpp,big,small);
+  makeAssociation("cc","C++ Source","text/plain",mime_text_cpp,big,small);
+  makeAssociation("h","Header File","text/plain",mime_text_h,big,small);
+
+  makeAssociation("copying","License","text/plain",mime_text_copy,big,small);
+  makeAssociation("readme","Read Me","text/plain",mime_text_copy,big,small);
+
+  makeAssociation("o","Object File","",mime_app_object,big,small);
+  makeAssociation("obj","Object File","",mime_app_object,big,small);
+
+  makeAssociation("bmp","BMP Image","image/bmp",mime_image,big,small);
+  makeAssociation("gif","BMP Image","image/gif",mime_image,big,small);
+  makeAssociation("jpg","JPEG Image","image/jpeg",mime_image,big,small);
+  makeAssociation("jpeg","JPEG Image","image/jpeg",mime_image,big,small);
+  makeAssociation("jpe","JPEG Image","image/jpeg",mime_image,big,small);
+  makeAssociation("pbm","PBM Image","image/x-portable-bitmap",big,big,small);
+  makeAssociation("pgm","PGM Image","image/x-portable-graymap",big,big,small);
+  makeAssociation("png","PNG Image","image/png",mime_image,big,small);
+  makeAssociation("pnm","PNM Image","image/x-portable-anymap",mime_image,big,small);
+  makeAssociation("ppm","PPM Image","image/x-portable-pixmap",mime_image,big,small);
+  makeAssociation("rgb","RGB Image","image/x-rgb",mime_image,big,small);
+  makeAssociation("svg","SVG Image","image/png",mime_image,big,small);
+  makeAssociation("tiff","TIFF Image","image/x-portable-anymap",mime_image,big,small);
+  makeAssociation("xbm","XBM Image","image/x-xbitmap",mime_image,big,small);
+  makeAssociation("xpm","XPM Image","image/x-xpixmap",mime_image,big,small);
+
+
+
+
+
+
+
+
+  }
+
+#endif
 
 void FXFileApplication::registerDDE(FXFile * in) {
   dde = in;
@@ -250,6 +567,19 @@ void FXFileApplication::createWindow(FXTabBook * tabbook){
   }
 
 
+void FXFileApplication::showFileProperties(const FXString & url,const FXStringList & files) {
+  if (fileproperties==NULL) {
+    fileproperties = new FXFileProperties(this,url,files,true);
+    }
+  fileproperties->update(url,files,true);
+  fileproperties->create();
+  fileproperties->recalc();
+  if (!fileproperties->shown()) fileproperties->show(PLACEMENT_SCREEN);
+  }
+
+FXbool FXFileApplication::filePropertiesShown() const {
+  return (fileproperties && fileproperties->shown());
+  }
 
 long FXFileApplication::onDDE(FXObject*,FXSelector,void*){
   FXString url;
@@ -327,6 +657,35 @@ long FXFileApplication::onChildSignal(FXObject*,FXSelector,void*){
   }
 
 
+long FXFileApplication::onCmdIconTheme(FXObject*,FXSelector sel,void*){
+  icontheme = FXSELID(sel)-ID_ICON_THEME_1; 
+  fxmessage("theme: %d/%d\n",icontheme,ARRAYNUMBER(iconthemes));
+  initAssociations(associations,iconthemes[icontheme]);
+  FXWindow * window = getRootWindow()->getFirst();
+  FXFileManager * manager;
+  while(window) {
+    manager = dynamic_cast<FXFileManager*>(window);
+    if (manager) manager->scan();
+    window = window->getNext();
+    }
+  return 1;
+  }
+
+
+long FXFileApplication::onUpdIconTheme(FXObject*sender,FXSelector sel,void*){
+  if ((FXSELID(sel)-ID_ICON_THEME_1) >= ARRAYNUMBER(iconthemes))
+    sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_HIDE),NULL);
+  else {
+    sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_SHOW),NULL);
+    if (( FXSELID(sel)-ID_ICON_THEME_1) == icontheme)
+      sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_CHECK),NULL);
+    else
+      sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_UNCHECK),NULL);
+
+    sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_SETSTRINGVALUE),(void*)&FXString(iconthemes[FXSELID(sel)-ID_ICON_THEME_1].themename));
+    }
+  return 1;
+  }
 
 
 

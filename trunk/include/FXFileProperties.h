@@ -53,7 +53,7 @@ private:
   void fileinfo(FXint no,FXuint & uflags,FXuint & gflags,FXuint & oflags,FXbool & user, FXbool & group, FXbool & sticky);
   void detectFileType();
   void initPermissions(FXbool advancedmode);
-  void setup(FXbool advancedmode);
+  void setup(const FXString & url,FXbool advancedmode);
 private:
   FXFileProperties(){}
   FXFileProperties(const FXFileProperties&);
@@ -61,8 +61,10 @@ private:
 public:
   long onCmdAccept(FXObject*,FXSelector,void*);
 public:
-  /// Construct dialog which will always float over the owner window
-  FXFileProperties(FXWindow* owner,const FXStringList & list,FXbool advancedmode);
+  FXFileProperties(FXApp* app,const FXString & url,const FXStringList & list,FXbool advancedmode);
+  FXFileProperties(FXWindow* owner,const FXString & url,const FXStringList & list,FXbool advancedmode);
+
+  void update(const FXString & url,const FXStringList & list,FXbool advancedmode);
   };
 
 #endif

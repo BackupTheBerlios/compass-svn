@@ -60,6 +60,7 @@ public:
   long onFileListRightClick(FXObject*,FXSelector,void*);
   long onFileListSelected(FXObject*,FXSelector,void*);
   long onFileListDeselected(FXObject*,FXSelector,void*);
+  long onFileListSelection(FXObject*,FXSelector,void*);
   long onDirListRightClick(FXObject*,FXSelector,void*);
   long onDirListDeleted(FXObject*,FXSelector,void*);
   long onImagePreviewClick(FXObject*,FXSelector,void*);
@@ -103,7 +104,7 @@ public:
   FXIcon * icon() const;
 
   /// Refresh the filelist
-  void update();
+  void update(FXIcon * icon);
 
   /// Are we in Preview Mode
   bool previewShown() const;

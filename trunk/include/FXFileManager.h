@@ -90,6 +90,7 @@ protected:
 
   void setTabLabel(FXTabItem *item,const FXString & url,FXIcon * icon);
   void updateActiveTab(FXint p);
+  void updateTab(FXint p);
   void createTab(bool initialtabonly=false);
   void closeTab(FXint tab);
   void showTabs();
@@ -115,8 +116,6 @@ public:
 
   long onCmdFileViewFileContext(FXObject*,FXSelector,void*);
   long onCmdFileViewDirContext(FXObject*,FXSelector,void*);
-
-
 
   long onListDNDEnter(FXObject*,FXSelector,void*);
   long onListDNDLeave(FXObject*,FXSelector,void*);
@@ -243,6 +242,8 @@ public:
   void executeBinding(const FXString & url);
 
   void duplicateTabBook(FXTabBook *);
+
+  void scan();
 
   virtual ~FXFileManager();
   };
