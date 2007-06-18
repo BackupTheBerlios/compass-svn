@@ -34,7 +34,7 @@ extern FXString display_bytes(FXulong bytes);
 
 
 
-#define UGO_FILE_PERMISSION "Forbidden\nCan Read\nCan Write\nCan Execute\nCan Read and Write\nCan Read and Execute\nCan Write and Execute\nCan Read, Write and Execute"
+#define UGO_FILE_PERMISSION "Forbidden\nCan Read\nCan Read and Write\nCan Read, Write and Execute\nCan Read and Execute\nCan Execute\nCan Write and Execute\nCan Write" 
 #define UGO_FOLDER_PERMISSION "Forbidden\nCan Read\nCan Write\nCan Enter\nCan Read and Write\nCan Read and Enter\nCan Write and Enter\nCan Read, Write and Enter"
 
 #define UGO_SIMPLE_FILE_PERMISSION "Forbidden\nCan Read\nCan Write\nCan Read and Write"
@@ -93,67 +93,67 @@ void FXFileProperties::fileinfo(FXint no,FXuint & uflags,FXuint & gflags,FXuint 
   if (info.isOwnerExecutable()) {
     if (info.isOwnerReadable()) {
       if (info.isOwnerWritable())
-        uflags=7;
+        uflags=3;
       else
-        uflags=5;
+        uflags=4;
       }
     else if (info.isOwnerWritable())
       uflags=6;
     else
-      uflags=3;
+      uflags=5;
     }
   else if (info.isOwnerReadable()){
     if (info.isOwnerWritable())
-      uflags=4;
+      uflags=2;
     else
       uflags=1;
     }
   else if (info.isOwnerWritable()){
-    uflags=2;
+    uflags=7;
     }
 
   if (info.isGroupExecutable()) {
     if (info.isGroupReadable()) {
       if (info.isGroupWritable())
-        gflags=7;
+        gflags=3;
       else
-        gflags=5;
+        gflags=4;
       }
     else if (info.isGroupWritable())
       gflags=6;
     else
-      gflags=3;
+      gflags=5;
     }
   else if (info.isGroupReadable()){
     if (info.isGroupWritable())
-      gflags=4;
+      gflags=2;
     else
       gflags=1;
     }
   else if (info.isGroupWritable()){
-    gflags=2;
+    gflags=7;
     }
 
   if (info.isOtherExecutable()) {
     if (info.isOtherReadable()) {
       if (info.isOtherWritable())
-        oflags=7;
+        oflags=3;
       else
-        oflags=5;
+        oflags=4;
       }
     else if (info.isOtherWritable())
       oflags=6;
     else
-      oflags=3;
+      oflags=5;
     }
   else if (info.isOtherReadable()){
     if (info.isOtherWritable())
-      oflags=4;
+      oflags=2;
     else
       oflags=1;
     }
   else if (info.isOtherWritable()){
-    oflags=2;
+    oflags=7;
     }
 
   user = info.isSetUid();
@@ -552,34 +552,33 @@ long FXFileProperties::onCmdAccept(FXObject*sender,FXSelector sel,void*ptr){
   if (ownerchanged || groupchanged || otherchanged || useridchanged || groupidchanged || stickyidchanged ) {
 
     switch(ownerlist->getCurrentItem()){
-      case  7: perm|=FXIO::OwnerFull;                     break;
+      case  7: perm|=FXIO::OwnerWrite;                    break;
       case  6: perm|=(FXIO::OwnerExec|FXIO::OwnerWrite);  break;
-      case  5: perm|=(FXIO::OwnerExec|FXIO::OwnerRead);   break;
-      case  4: perm|=(FXIO::OwnerWrite|FXIO::OwnerRead);  break;
-      case  3: perm|=FXIO::OwnerExec;                     break;
-      case  2: perm|=FXIO::OwnerWrite;                    break;
+      case  5: perm|=FXIO::OwnerExec;                     break;
+      case  4: perm|=(FXIO::OwnerRead|FXIO::OwnerExec);   break;
+      case  3: perm|=FXIO::OwnerFull;                     break;
+      case  2: perm|=(FXIO::OwnerRead|FXIO::OwnerWrite);  break;
       case  1: perm|=FXIO::OwnerRead;                     break;
       default: break;
       }
-
     switch(grouplist->getCurrentItem()){
-      case  7: perm|=FXIO::GroupFull;                     break;
+      case  7: perm|=FXIO::GroupWrite;                    break;
       case  6: perm|=(FXIO::GroupExec|FXIO::GroupWrite);  break;
-      case  5: perm|=(FXIO::GroupExec|FXIO::GroupRead);   break;
-      case  4: perm|=(FXIO::GroupWrite|FXIO::GroupRead);  break;
-      case  3: perm|=FXIO::GroupExec;                     break;
-      case  2: perm|=FXIO::GroupWrite;                    break;
+      case  5: perm|=FXIO::GroupExec;                     break;
+      case  4: perm|=(FXIO::GroupRead|FXIO::GroupExec);   break;
+      case  3: perm|=FXIO::GroupFull;                     break;
+      case  2: perm|=(FXIO::GroupRead|FXIO::GroupWrite);  break;
       case  1: perm|=FXIO::GroupRead;                     break;
       default: break;
       }
 
     switch(otherlist->getCurrentItem()){
-      case  7: perm|=FXIO::OtherFull;                     break;
+      case  7: perm|=FXIO::OtherWrite;                    break;
       case  6: perm|=(FXIO::OtherExec|FXIO::OtherWrite);  break;
-      case  5: perm|=(FXIO::OtherExec|FXIO::OtherRead);   break;
-      case  4: perm|=(FXIO::OtherWrite|FXIO::OtherRead);  break;
-      case  3: perm|=FXIO::OtherExec;                     break;
-      case  2: perm|=FXIO::OtherWrite;                    break;
+      case  5: perm|=FXIO::OtherExec;                     break;
+      case  4: perm|=(FXIO::OtherRead|FXIO::OtherExec);   break;
+      case  3: perm|=FXIO::OtherFull;                     break;
+      case  2: perm|=(FXIO::OtherRead|FXIO::OtherWrite);  break;
       case  1: perm|=FXIO::OtherRead;                     break;
       default: break;
       }

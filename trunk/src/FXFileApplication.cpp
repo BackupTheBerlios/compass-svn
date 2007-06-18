@@ -176,12 +176,6 @@ struct IconTheme {
   const char * presentation;
   const char * text;
   const char * www;
-
-  const char * go_home;
-  const char * go_up;
-  const char * go_previous;
-  const char * go_next;
-
   FXbool       available;
   };        
 
@@ -336,49 +330,101 @@ static IconTheme iconthemes[]={
     NULL, /// Text Files
     NULL, /// WWW
     false, 
+  },
+
+  // KIDS
+  {
+    "Kids", /// Theme Name
+    "/usr/share/icons/kids", /// Icon Path
+    "32x32/", /// Big
+    "16x16/", /// Small
+    "filesystems/exec.png", /// Executable
+    "filesystems/folder.png", /// Folder 
+    NULL, /// Folder Open
+    "filesystems/folder_home.png", /// Folder Home
+    "filesystems/desktop.png", /// Folder Desktop
+    "mimetypes/empty.png",/// File   
+    NULL, /// Audio File
+    NULL, /// Archive
+    NULL, /// Image
+    NULL, /// Video
+    NULL, /// Office Document
+    NULL, /// Office Spreadsheet
+    NULL, /// Office Presentation
+    NULL, /// Text Files
+    NULL, /// WWW
+    false, 
   }
 
 };
 
 
 inline static void assoc_exact(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon) {
-  FXString value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  FXString value;
+  if (icon)
+    value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  else
+    value = FXStringFormat(";%s;;;%s",description,mime);
   dict->replace(key,value.text());
   }
 
 inline static void assoc_exact(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon,const char * icon_open) {
-  FXString value = FXStringFormat(";%s;%s%s:%s%s;%s%s:%s%s;%s",description,theme.big,icon,theme.big,icon_open,theme.small,icon,theme.small,icon_open,mime);
+  FXString value;
+  if (icon && icon_open)
+    value = FXStringFormat(";%s;%s%s:%s%s;%s%s:%s%s;%s",description,theme.big,icon,theme.big,icon_open,theme.small,icon,theme.small,icon_open,mime);
+  else if (icon)
+    value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  else if (icon_open)
+    value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon_open,theme.small,icon_open,mime);
+  else
+    value = FXStringFormat(";%s;;;%s",description,mime);
   dict->replace(key,value.text());
   }
 
 inline static void assoc(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon) {
-  FXString value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  FXString value;
+  if (icon)
+    value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  else
+    value = FXStringFormat(";%s;;;%s",description,mime);
   dict->replace(key,value.text());
   dict->replace(FXString(key).upper().text(),value.text());
   }
 
 inline static void assoc(FXFileDict * dict,const IconTheme & theme,const char * key,const char * description,const char * mime,const char * icon,const char * icon_open) {
-  FXString value = FXStringFormat(";%s;%s%s:%s%s;%s%s:%s%s;%s",description,theme.big,icon,theme.big,icon_open,theme.small,icon,theme.small,icon_open,mime);
+  FXString value;
+  if (icon && icon_open)
+    value = FXStringFormat(";%s;%s%s:%s%s;%s%s:%s%s;%s",description,theme.big,icon,theme.big,icon_open,theme.small,icon,theme.small,icon_open,mime);
+  else if (icon)
+    value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon,theme.small,icon,mime);
+  else if (icon_open)
+    value = FXStringFormat(";%s;%s%s;%s%s;%s",description,theme.big,icon_open,theme.small,icon_open,mime);
+  else
+    value = FXStringFormat(";%s;;;%s",description,mime);
   dict->replace(key,value.text());
   dict->replace(FXString(key).upper().text(),value.text());
   }
 
 
 void initAssociations(FXFileDict * dict, const IconTheme & theme) {
-  fxmessage("IconPath: %s\n",theme.iconpath);
+  const char * icon;
+
+  dict->getIconDict()->clear();
+
   dict->setIconPath(theme.iconpath);
 
-  assoc_exact(dict,theme,FXFileDict::defaultExecBinding,"","",theme.executable);
+  assoc_exact(dict,theme,FXFileDict::defaultExecBinding,"Executable","",theme.executable);
   if (theme.folder_open)
-    assoc_exact(dict,theme,FXFileDict::defaultDirBinding,"","",theme.folder,theme.folder_open);
+    assoc_exact(dict,theme,FXFileDict::defaultDirBinding,"Folder","",theme.folder,theme.folder_open);
   else
-    assoc_exact(dict,theme,FXFileDict::defaultDirBinding,"","",theme.folder);
+    assoc_exact(dict,theme,FXFileDict::defaultDirBinding,"Folder","",theme.folder);
 
   assoc_exact(dict,theme,FXFileDict::defaultFileBinding,"","",theme.file);
   assoc_exact(dict,theme,FXSystem::getHomeDirectory().text(),"","",theme.folder_home);
   assoc_exact(dict,theme,FXString(FXSystem::getHomeDirectory()+PATHSEPSTRING+"Desktop").text(),"","",theme.folder_desktop);
 
   /// Audio Files
+  icon = (theme.audio) ? theme.audio : theme.file;
   assoc(dict,theme,"ogg","Ogg Vorbis","",theme.audio);
   assoc(dict,theme,"mp3","Mpeg Layer 3","",theme.audio);
   assoc(dict,theme,"mp4","Audio","",theme.audio);
@@ -390,73 +436,106 @@ void initAssociations(FXFileDict * dict, const IconTheme & theme) {
   assoc(dict,theme,"wav","Wav Audio","",theme.audio);
 
   /// Archive Files
-  assoc(dict,theme,"tar","Archive","",theme.archive);
-  assoc(dict,theme,"tar.gz","GZip Archive","application/x-tgz",theme.archive);
-  assoc(dict,theme,"tar.bz2","BZip2 Archive","application/x-tbz",theme.archive);
-  assoc(dict,theme,"tgz","GZip Archive","application/x-tgz",theme.archive);
-  assoc(dict,theme,"bz2","BZip2 Archive","application/x-tbz",theme.archive);
-  assoc(dict,theme,"zip","Zip Archive","application/x-zip",theme.archive);
+  icon = (theme.archive) ? theme.archive : theme.file;
+  assoc(dict,theme,"tar","Archive","",icon);
+  assoc(dict,theme,"tar.gz","Archive (gzip)","application/x-tgz",icon);
+  assoc(dict,theme,"tar.bz2","Archive (bzip2)","application/x-tbz",icon);
+  assoc(dict,theme,"tgz","Archive (gzip)","application/x-tgz",icon);
+  assoc(dict,theme,"bz2","Archive (bzip2)","application/x-tbz",icon);
+  assoc(dict,theme,"zip","Archive (zip)","application/x-zip",icon);
 
   /// Image Files
-  assoc(dict,theme,"bmp","Image","image/x-bmp",theme.image);
-  assoc(dict,theme,"gif","Image","image/gif",theme.image);
-  assoc(dict,theme,"ico","Icon","image/x-ico",theme.image);
-  assoc(dict,theme,"jpeg","Image","image/jpeg",theme.image);
-  assoc(dict,theme,"jpg","Image","image/jpg",theme.image);
-  assoc(dict,theme,"pcx","Image","image/x-pcx",theme.image);
-  assoc(dict,theme,"png","Image","image/png",theme.image);
-  assoc(dict,theme,"rgb","Image","image/x-rgb",theme.image);
-  assoc(dict,theme,"tga","Image","image/x-targa",theme.image);
-  assoc(dict,theme,"tiff","Image","image/tiff",theme.image);
-  assoc(dict,theme,"xbm","Image","image/x-xbm",theme.image);
+  icon = (theme.image) ? theme.image : theme.file;
+  assoc(dict,theme,"bmp","Image","image/x-bmp",icon);
+  assoc(dict,theme,"gif","Image","image/gif",icon);
+  assoc(dict,theme,"ico","Icon","image/x-ico",icon);
+  assoc(dict,theme,"jpeg","Image","image/jpeg",icon);
+  assoc(dict,theme,"jpg","Image","image/jpg",icon);
+  assoc(dict,theme,"pcx","Image","image/x-pcx",icon);
+  assoc(dict,theme,"png","Image","image/png",icon);
+  assoc(dict,theme,"rgb","Image","image/x-rgb",icon);
+  assoc(dict,theme,"tga","Image","image/x-targa",icon);
+  assoc(dict,theme,"tiff","Image","image/tiff",icon);
+  assoc(dict,theme,"xbm","Image","image/x-xbm",icon);
 
   /// Video Files
-  assoc(dict,theme,"avi","Video","video/avi",theme.video);
-  assoc(dict,theme,"qt","Video","video/quicktime",theme.video);
-  assoc(dict,theme,"mov","Video","video/quicktime",theme.video);
-  assoc(dict,theme,"mpg","Video","video/mpeg",theme.video);
-  assoc(dict,theme,"mpeg","Video","video/mpeg",theme.video);
-  assoc(dict,theme,"m4v","Video","video/mp4",theme.video);
-  assoc(dict,theme,"wmv","Video","video/wmv",theme.video);
+  icon = (theme.video) ? theme.video : theme.file;
+  assoc(dict,theme,"avi","Video","video/avi",icon);
+  assoc(dict,theme,"qt","Video","video/quicktime",icon);
+  assoc(dict,theme,"mov","Video","video/quicktime",icon);
+  assoc(dict,theme,"mpg","Video","video/mpeg",icon);
+  assoc(dict,theme,"mpeg","Video","video/mpeg",icon);
+  assoc(dict,theme,"m4v","Video","video/mp4",icon);
+  assoc(dict,theme,"wmv","Video","video/wmv",icon);
 
   /// Office Documents
-  assoc(dict,theme,"doc","Word Document","application/vnd.ms-word",theme.document);
-  assoc(dict,theme,"pdf","PDF Document","application/pdf",theme.document);
-  assoc(dict,theme,"ps","Post Script Document","application/ps",theme.document);
-  assoc(dict,theme,"wpd","Word Perfect Document","application/wordperfect",theme.document);
-  assoc(dict,theme,"sxw","Open Office Text","application/vnd.sun.xml.write",theme.document);
-  assoc(dict,theme,"odt","Open Document Text","application/vnd.oasis.opendocument.text",theme.document);
+  icon = (theme.document) ? theme.document : theme.file;
+  assoc(dict,theme,"doc","Word Document","application/vnd.ms-word",icon);
+  assoc(dict,theme,"pdf","PDF Document","application/pdf",icon);
+  assoc(dict,theme,"ps","Post Script Document","application/ps",icon);
+  assoc(dict,theme,"wpd","Word Perfect Document","application/wordperfect",icon);
+  assoc(dict,theme,"sxw","Open Office Text","application/vnd.sun.xml.write",icon);
+  assoc(dict,theme,"odt","Open Document Text","application/vnd.oasis.opendocument.text",icon);
 
   /// Office Spreadsheet
-  assoc(dict,theme,"xls","Excel Spreadsheet","application/vnd.ms-excel",theme.spreadsheet);
-  assoc(dict,theme,"sxc","Open Office Spreadsheet","application/vnd.sun.xml.calc",theme.spreadsheet);
-  assoc(dict,theme,"ods","Open Document Spreadsheet","application/vnd.oasis.opendocument.spreadsheet",theme.spreadsheet);
+  icon = (theme.spreadsheet) ? theme.spreadsheet : theme.file;
+  assoc(dict,theme,"xls","Excel Spreadsheet","application/vnd.ms-excel",icon);
+  assoc(dict,theme,"sxc","Open Office Spreadsheet","application/vnd.sun.xml.calc",icon);
+  assoc(dict,theme,"ods","Open Document Spreadsheet","application/vnd.oasis.opendocument.spreadsheet",icon);
 
   /// Office Presentation
-  assoc(dict,theme,"ppt","PowerPoint Presentation","application/vnd.ms-powerpoint",theme.presentation);
-  assoc(dict,theme,"sxi","Open Office Presentation","application/vnd.sun.xml.impress",theme.spreadsheet);
-  assoc(dict,theme,"otp","Open Document Presentation","application/vnd.oasis.opendocument.presentation",theme.spreadsheet);
-
+  icon = (theme.presentation) ? theme.presentation : theme.file;
+  assoc(dict,theme,"ppt","PowerPoint Presentation","application/vnd.ms-powerpoint",icon);
+  assoc(dict,theme,"sxi","Open Office Presentation","application/vnd.sun.xml.impress",icon);
+  assoc(dict,theme,"otp","Open Document Presentation","application/vnd.oasis.opendocument.presentation",icon);
 
   /// Text Files
-  assoc(dict,theme,"readme","Read Me","text/plain",theme.text);
+  icon = (theme.text) ? theme.text : theme.file;
+  assoc(dict,theme,"readme","Read Me","text/plain",icon);
+  assoc(dict,theme,"cpp","C++ Source","text/x-c++src",icon);
+  assoc(dict,theme,"cxx","C++ Source","text/x-c++src",icon);
+  assoc(dict,theme,"cc","C++ Source","text/x-c++src",icon);
+  assoc(dict,theme,"c","C Source","text/x-c++src",icon);
+  assoc(dict,theme,"h","C/C++ Header","text/x-chdr",icon);
+  assoc(dict,theme,"hxx","C/C++ Header","text/x-chdr",icon);
 
 
+  assoc(dict,theme,"o","Object","",icon);
+  assoc(dict,theme,"obj","Object","",icon);
+
+
+/*
 README="adie;ReadMe File;big/info.png;small/info.png;text/plain"
 INSTALL="adie;Installation Instructions;big/info.png;small/info.png;text/plain"
 AUTHORS="adie;Author Information;big/info.png;small/info.png;text/plain"
 LICENSE="adie;License Information;big/info.png;small/info.png;text/plain"
-
+*/
   /// Internet Related
-  assoc(dict,theme,"html","HTML Document","text/html",theme.www);
-  assoc(dict,theme,"htm","HTML Document","text/html",theme.www);
+  icon = (theme.www) ? theme.www : theme.file;
+  assoc(dict,theme,"html","HTML Document","text/html",icon);
+  assoc(dict,theme,"htm","HTML Document","text/html",icon);
+
+
+
+
+
+
 
   }
 
+/*
+
+void init_theme(IconTheme & themes[]) {
+  for (FXint i=0;i<ARRAYNUMBER(themes);i++){
+    if (themes[i].folder && themes[i].file && themes[i].big && themes[i].small && themes[i].iconpath) {
+      if (FXStat::exists(themes[i].iconpath) && FXStat::exists(FXStri
 
 
 
-
+      }
+    }
+  }
+*/
 
 
 
@@ -472,8 +551,8 @@ LICENSE="adie;License Information;big/info.png;small/info.png;text/plain"
 
 
 FXDEFMAP(FXFileApplication) FXFileApplicationMap[]={
-  FXMAPFUNCS(SEL_COMMAND,FXFileApplication::ID_ICON_THEME_1,FXFileApplication::ID_ICON_THEME_6,FXFileApplication::onCmdIconTheme),
-  FXMAPFUNCS(SEL_UPDATE, FXFileApplication::ID_ICON_THEME_1,FXFileApplication::ID_ICON_THEME_6,FXFileApplication::onUpdIconTheme),
+  FXMAPFUNCS(SEL_COMMAND,FXFileApplication::ID_ICON_THEME_1,FXFileApplication::ID_ICON_THEME_7,FXFileApplication::onCmdIconTheme),
+  FXMAPFUNCS(SEL_UPDATE, FXFileApplication::ID_ICON_THEME_1,FXFileApplication::ID_ICON_THEME_7,FXFileApplication::onUpdIconTheme),
   FXMAPFUNC(SEL_COMMAND, FXFileApplication::ID_NEW_WINDOW,FXFileApplication::onCmdNewWindow),
   FXMAPFUNC(SEL_SIGNAL,  FXFileApplication::ID_CHILD,FXFileApplication::onChildSignal),
   FXMAPFUNC(SEL_IO_READ, FXFileApplication::ID_DDE,FXFileApplication::onDDE),

@@ -98,6 +98,7 @@ public:
     ID_ICON_THEME_4,
     ID_ICON_THEME_5,
     ID_ICON_THEME_6,
+    ID_ICON_THEME_7,
     ID_LAST
     };
 public:

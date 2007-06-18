@@ -537,8 +537,17 @@ void FXFileManager::createTab(bool initialtabonly) {
 
 
 void FXFileManager::scan() {
+
+  /// Update Location Icons
+  for (FXint i=0;i<location->getNumItems();i++){
+    if (FXStat::isDirectory(location->getItemText(i)))
+      location->setItemIcon(i,FXFileApplication::me->getIconForDirectory(location->getItemText(i)));
+    else
+      location->setItemIcon(i,FXFileApplication::me->getIconForFile(location->getItemText(i)));
+    }
+
   if (tabbook) {
-    for (int i=0;i<tabbook->numChildren()/2;i++) {
+    for (FXint i=0;i<tabbook->numChildren()/2;i++) {
       updateTab(i);
       }
     }
@@ -611,7 +620,7 @@ void FXFileManager::updateActiveTab(FXint tab) {
 void FXFileManager::updateTab(FXint tab){
   FXTabItem * ti = dynamic_cast<FXTabItem*>(tabbook->childAtIndex(tab*2));
   FXFileView* fv = dynamic_cast<FXFileView*>(tabbook->childAtIndex((tab*2)+1)->childAtIndex(1));
-  if (FXStat::isDirectory(fileview->url())) 
+  if (FXStat::isDirectory(fv->url())) 
     fileview->update(FXFileApplication::me->getIconForDirectory(fv->url()));
   else
     fileview->update(FXFileApplication::me->getIconForFile(fv->url()));
@@ -737,7 +746,18 @@ void FXFileManager::view(const FXString & url,FXViewSource src) {
 
     dirwritable = isWritable(FXPath::directory(url));
     }
-  else {    
+  else if (comparecase("ssh://",url,6)==0) {    
+    FXString tmpdir = FXPath::unique(FXSystem::getTempDirectory() + PATHSEPSTRING + "compass_ssh_mount");
+    FXString cmd = "sshfs " + url.mid(6,2000) + " " + tmpdir;
+    FXDir::create(tmpdir);
+    fxmessage("Command: %s\n",cmd.text());
+    system(cmd.text());
+//    return view
+    updateView(tmpdir,icon,do_preview);
+  return;
+//    location->setText(tmpdir->url());
+    }
+  else {
     location->setText(fileview->url());
     return;
     }  
