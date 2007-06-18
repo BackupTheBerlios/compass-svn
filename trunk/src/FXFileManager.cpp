@@ -238,7 +238,7 @@ void FXFileManager::initUserInterface() {
 
   statusbar = new FXStatusBar(this,LAYOUT_FILL_X|LAYOUT_SIDE_BOTTOM|STATUSBAR_WITH_DRAGCORNER,0,0,0,0,1,1,1,1);
 
-  main = new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,0,0,0,0);
+  main = new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,2,2,2,2);
 
 
   // File menu

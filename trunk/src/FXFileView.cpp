@@ -62,7 +62,7 @@ FXFileView::FXFileView(FXComposite *p,FXObject * tgt,FXSelector sel,FXuint opts)
   dirlist->setAssociations(FXFileApplication::me->getAssociations());
   sunkenframe = new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0,0,0,0,0);
   switcher  = new FXSwitcher(sunkenframe,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,0,0,0,0);
-  filelist  = new FXFileListEx(switcher,this,ID_FILELIST,LAYOUT_FILL_X|LAYOUT_FILL_Y|FILELIST_NO_OWN_ASSOC);
+  filelist  = new FXFileListEx(switcher,this,ID_FILELIST,LAYOUT_FILL_X|LAYOUT_FILL_Y|FILELIST_NO_OWN_ASSOC|ICONLIST_AUTOSIZE);
   imageview = new FXImageViewEx(switcher,NULL,this,ID_IMAGEPREVIEW,LAYOUT_FILL_X|LAYOUT_FILL_Y);
   filelist->setAssociations(FXFileApplication::me->getAssociations());
 

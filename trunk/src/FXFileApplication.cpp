@@ -30,7 +30,130 @@
 #include "FXFileProperties.h"
 #include "icons.h"
 
+/*
 
+#-------------------------------------
+# FOX Desktop Standard File Bindings
+#-------------------------------------
+
+[SETTINGS]
+iconpath="/usr/share/fox-desktop/icons/default"
+
+[FILETYPES]
+
+#-------------------------
+# File and Folders
+#-------------------------
+defaultfilebinding=";;big/empty.png;small/empty.png"
+
+#-------------------------
+# Standard Files
+#-------------------------
+README="adie;ReadMe File;big/info.png;small/info.png;text/plain"
+INSTALL="adie;Installation Instructions;big/info.png;small/info.png;text/plain"
+AUTHORS="adie;Author Information;big/info.png;small/info.png;text/plain"
+LICENSE="adie;License Information;big/info.png;small/info.png;text/plain"
+
+#-------------------------
+# Archives
+#-------------------------
+tar.bz2=";Bzip2-ed Tar Archive;big/tgz.png;small/tgz.png;application/x-tbz"
+tar.gz=";Gzipped Tar Archive;big/tgz.png;small/tgz.png;application/x-tgz"
+tgz=";Gzipped Tar Archive;big/tgz.png;small/tgz.png;application/x-tgz"
+gz=";Gzip File;big/tgz.png;small/tgz.png;application/x-gzip"
+bz2=";Bzip2 File;big/tgz.png;small/tgz.png;application/x-bzip2"
+zip=";Zip Archive;big/tgz.png;small/tgz.png;application/x-zip"
+
+#-------------------------
+# System Related
+#-------------------------
+o=";Object Code;big/binary.png;small/binary.png;application/x-object"
+
+#-------------------------
+# Text
+#-------------------------
+txt="adie;Plain Text Document;big/txt.png;small/txt.png;text/plain"
+html="firefox;HTML Document;big/html.png;small/html.png;text/html"
+htm="firefox;HTML Document;big/html.png;small/html.png;text/html"
+
+cpp="adie;C++ Source File;big/source_cpp.png;small/source_cpp.png;text/x-c++src"
+cxx="adie;C++ Source File;big/source_cpp.png;small/source_cpp.png;text/x-c++src"
+cc="adie;C++ Source File;big/source_cpp.png;small/source_cpp.png;text/x-c++src"
+C="adie;C++ Source File;big/source_cpp.png;small/source_cpp.png;text/x-c++src"
+
+c="adie;C Source File;big/source_c.png;small/source_c.png;text/x-csrc"
+h="adie;C/C++ Header File;big/source_h.png;small/source_h.png;text/x-chdr"
+
+#-------------------------
+# Audio Types
+#-------------------------
+aac=";AAC Sound;big/sound.png;small/sound.png;audio/aac"
+ac3=";Dolby AC3 Sound;big/sound.png;small/sound.png;audio/ac3"
+flac="gmm;FLAC Audio;big/sound.png;small/sound.png;audio/x-flac"
+mp3="gmm;MPEG Layer 3 Audio;big/sound.png;small/sound.png;audio/x-mp3"
+ogg="gmm;Ogg Vorbis Audio;big/sound.png;small/sound.png;application/ogg"
+wav=";WAV Audio;big/sound.png;small/sound.png;audio/x-wav"
+
+#-------------------------
+# Image Types
+#-------------------------
+bmp=";BMP Image;big/image.png;small/image.png;image/x-bmp"
+gif=";GIF Image;big/image.png;small/image.png;image/gif"
+ico=";Windows Icon;big/image.png;small/image.png;image/x-ico"
+jpeg=";JPEG Image;big/image.png;small/image.png;image/jpeg"
+jpg=";JPEG Image;big/image.png;small/image.png;image/jpg"
+pcx=";PCX Image;big/image.png;small/image.png;image/x-pcx"
+png=";PNG Image;big/image.png;small/image.png;image/png"
+rgb=";SGI Image;big/image.png;small/image.png;image/x-rgb"
+tga=";TGA Image;big/image.png;small/image.png;image/x-targa"
+tiff=";TIFF Image;big/image.png;small/image.png;image/tiff"
+xbm=";X Bitmap Image;big/image.png;small/image.png;image/x-xbm"
+
+#-------------------------
+# Video Types
+#-------------------------
+avi=";Microsoft AVI Video;big/video.png;small/video.png;video/avi"
+wmv="mplayer;Windows Media Video;big/video.png;small/video.png;video/wmv"
+mp4="mplayer;MPEG-4 Video;big/video.png;small/video.png;video/mp4"
+mpeg="mplayer;MPEG Video;big/video.png;small/video.png;video/mpeg"
+mpg="mplayer;MPEG Video;big/video.png;small/video.png;video/mpeg"
+mov="mplayer;Quicktime Video;big/video.png;small/video.png;video/quicktime"
+qt="mplayer;Quicktime Video;big/video.png;small/video.png;video/quicktime"
+
+#-------------------------
+# Office Documents
+#-------------------------
+doc=";Microsoft Word Document;big/wordprocessing.png;small/wordprocessing.png;application/vnd.ms-word"
+xls=";Microsoft Excel Spreadsheet;big/spreadsheet.png;small/spreadsheet.png;application/vnd.ms-excel"
+ppt=";Microsoft PowerPoint Presentation;big/presentation.png;small/presentation.png;application/vnd.ms-powerpoint"
+wpd=";WordPerfect Document;big/wordprocessing.png;small/wordprocessing.png;application/wordperfect"
+
+odc=";OpenDocument Chart;;;application/vnd.oasis.opendocument.chart"
+odf=";OpenDocument Formula;;;application/vnd.oasis.opendocument.formula"
+odg=";OpenDocument Graphics;;;application/vnd.oasis.opendocument.graphics"
+odi=";OpenDocument Image;;;application/vnd.oasis.opendocument.image"
+odp=";OpenDocument Presentation;;;application/vnd.oasis.opendocument.presentation"
+ods=";OpenDocument SpreadSheet;;;application/vnd.oasis.opendocument.spreadsheet"
+odt=";OpenDocument Text;;;application/vnd.oasis.opendocument.text"
+otg=";OpenDocument Graphics Template;;;application/vnd.oasis.opendocument.graphics-template"
+otp=";OpenDocument Presentation Template;;;application/vnd.oasis.opendocument.presentation-template"
+ots=";OpenDocument SpreadSheet Template;;;application/vnd.oasis.opendocument.spreadsheet-template"
+ott=";OpenDocument Text Template;;;application/vnd.oasis.opendocument.text-template"
+
+odb=";OpenOffice.org Database;;;application/vnd.sun.xml.base"
+sxc=";OpenOffice.org Spreadsheet;;;application/vnd.sun.xml.calc"
+stc=";OpenOffice.org Spreadsheet Template;;;application/vnd.sun.xml.calc.template"
+sxd=";OpenOffice.org Drawing;;;application/vnd.sun.xml.draw"
+std=";OpenOffice.org Drawing Template;;;application/vnd.sun.xml.draw.template"
+sxi=";OpenOffice.org Presentation;;;application/vnd.sun.xml.impress"
+sti=";OpenOffice.org Presentation Template;;;application/vnd.sun.xml.impress.template"
+sxw=";OpenOffice.org Text Document;;;application/vnd.sun.xml.writer"
+sxg=";OpenOffice.org Master Text Document;;;application/vnd.sun.xml.writer.master"
+stw=";OpenOffice.org Text Document Template;;;application/vnd.sun.xml.writer.template"
+
+pdf="xpdf;PDF Document;big/pdf.png;small/pdf.png;application/pdf"
+ps=";PostScript Document;big/postscript.png;small/postscript.png;application/ps"
+*/
 
 
 struct IconTheme {
@@ -44,6 +167,22 @@ struct IconTheme {
   const char * folder_home;   
   const char * folder_desktop; 
   const char * file;
+  const char * audio;
+  const char * archive;
+  const char * image;
+  const char * video;
+  const char * document;
+  const char * spreadsheet;
+  const char * presentation;
+  const char * text;
+  const char * www;
+
+  const char * go_home;
+  const char * go_up;
+  const char * go_previous;
+  const char * go_next;
+
+  FXbool       available;
   };        
 
 
@@ -60,13 +199,23 @@ static IconTheme iconthemes[]={
     NULL, /// Folder Open
     NULL, /// Folder Home
     NULL, /// Folder Desktop
-    NULL /// File
+    NULL, /// File
+    NULL, /// Audio Type
+    NULL, /// Archive
+    NULL, /// Image
+    NULL, /// Video
+    NULL, /// Office Document
+    NULL, /// Office Spreadsheet
+    NULL, /// Office Presentation
+    NULL, /// Text Files
+    NULL, /// WWW  
+    true,
   },
 
   // The GNOME theme  
   {
     
-    "Gnome", /// Theme Name
+    "Gnome FC5", /// Theme Name
     "/usr/share/icons/gnome", /// Icon Path
     "48x48/", /// Big
     "16x16/", /// Small
@@ -75,8 +224,45 @@ static IconTheme iconthemes[]={
     NULL, /// Folder Open
     "filesystems/gnome-fs-home.png", /// Folder Home
     "filesystems/gnome-fs-directory.png", /// Folder Desktop
-    "filesystems/gnome-fs-regular.png" /// File   
+    "filesystems/gnome-fs-regular.png", /// File
+    NULL, /// Audio File
+    NULL, /// Archive
+    NULL, /// Image
+    NULL, /// Video
+    NULL, /// Office Document
+    NULL, /// Office Spreadsheet
+    NULL, /// Office Presentation
+    NULL, /// Text Files
+    NULL, /// WWW   
+    false,
   },
+
+
+  // The GNOME theme  
+  {
+    
+    "Gnome", /// Theme Name
+    "/usr/share/icons/gnome", /// Icon Path
+    "32x32/", /// Big
+    "16x16/", /// Small
+    "mimetypes/gnome-mime-application-x-executable.png", /// Executable
+    "places/gnome-fs-directory.png", /// Folder 
+    NULL, /// Folder Open
+    "places/gnome-fs-home.png", /// Folder Home
+    "places/gnome-fs-directory.png", /// Folder Desktop
+    "mimetypes/text-x-generic.png", /// File
+    NULL, /// Audio File
+    NULL, /// Archive
+    NULL, /// Image
+    NULL, /// Video
+    NULL, /// Office Document
+    NULL, /// Office Spreadsheet
+    NULL, /// Office Presentation
+    NULL, /// Text Files
+    NULL, /// WWW
+    false,   
+  },
+
 
   // Tango
   {
@@ -86,10 +272,21 @@ static IconTheme iconthemes[]={
     "16x16/", /// Small
     "mimetypes/application-x-executable.png", /// Executable
     "places/folder.png", /// Folder 
-    NULL, /// Folder Open
+    "status/folder-open.png", /// Folder Open
     "places/user-home.png", /// Folder Home
     "places/user-desktop.png", /// Folder Desktop
-    "mimetypes/text-x-generic.png" /// File   
+    "mimetypes/text-x-generic-template.png", /// File
+    "mimetypes/audio-x-generic.png", /// Audio File
+    "mimetypes/package-x-generic.png", /// Archive File 
+    "mimetypes/image-x-generic.png", /// Image
+    "mimetypes/video-x-generic.png", /// Video
+    "mimetypes/x-office-document.png", /// Office Document
+    "mimetypes/x-office-spreadsheet.png", /// Office Spreadsheet
+    "mimetypes/x-office-presentation.png", /// Office Presentation
+    "mimetypes/text-x-generic.png", /// Text Files
+    "mimetypes/text-html.png", /// WWW
+
+    false,   
   },
 
 
@@ -104,7 +301,17 @@ static IconTheme iconthemes[]={
     "filesystems/folder_open.png", /// Folder Open
     "filesystems/folder_home.png", /// Folder Home
     "filesystems/desktop.png", /// Folder Desktop
-    "mimetypes/empty.png" /// File   
+    "mimetypes/empty.png", /// File
+    NULL, /// Audio File
+    NULL, /// Archive
+    NULL, /// Image
+    NULL, /// Video
+    NULL, /// Office Document
+    NULL, /// Office Spreadsheet
+    NULL, /// Office Presentation
+    NULL, /// Text Files
+    NULL, /// WWW
+    false,   
   },
 
   // Crystal SVG
@@ -118,7 +325,17 @@ static IconTheme iconthemes[]={
     "filesystems/folder_open.png", /// Folder Open
     "filesystems/folder_home.png", /// Folder Home
     "filesystems/desktop.png", /// Folder Desktop
-    "mimetypes/empty.png" /// File   
+    "mimetypes/empty.png", /// File
+    NULL, /// Audio File
+    NULL, /// Archive
+    NULL, /// Image
+    NULL, /// Video
+    NULL, /// Office Document
+    NULL, /// Office Spreadsheet
+    NULL, /// Office Presentation
+    NULL, /// Text Files
+    NULL, /// WWW
+    false, 
   }
 
 };
@@ -160,7 +377,83 @@ void initAssociations(FXFileDict * dict, const IconTheme & theme) {
   assoc_exact(dict,theme,FXFileDict::defaultFileBinding,"","",theme.file);
   assoc_exact(dict,theme,FXSystem::getHomeDirectory().text(),"","",theme.folder_home);
   assoc_exact(dict,theme,FXString(FXSystem::getHomeDirectory()+PATHSEPSTRING+"Desktop").text(),"","",theme.folder_desktop);
+
+  /// Audio Files
+  assoc(dict,theme,"ogg","Ogg Vorbis","",theme.audio);
+  assoc(dict,theme,"mp3","Mpeg Layer 3","",theme.audio);
+  assoc(dict,theme,"mp4","Audio","",theme.audio);
+  assoc(dict,theme,"m4a","Audio","",theme.audio);
+  assoc(dict,theme,"aac","Audio","",theme.audio);
+  assoc(dict,theme,"ac3","Audio","",theme.audio);
+  assoc(dict,theme,"mpc","MusePack","",theme.audio);
+  assoc(dict,theme,"flac","Lossless Audio","",theme.audio);
+  assoc(dict,theme,"wav","Wav Audio","",theme.audio);
+
+  /// Archive Files
+  assoc(dict,theme,"tar","Archive","",theme.archive);
+  assoc(dict,theme,"tar.gz","GZip Archive","application/x-tgz",theme.archive);
+  assoc(dict,theme,"tar.bz2","BZip2 Archive","application/x-tbz",theme.archive);
+  assoc(dict,theme,"tgz","GZip Archive","application/x-tgz",theme.archive);
+  assoc(dict,theme,"bz2","BZip2 Archive","application/x-tbz",theme.archive);
+  assoc(dict,theme,"zip","Zip Archive","application/x-zip",theme.archive);
+
+  /// Image Files
+  assoc(dict,theme,"bmp","Image","image/x-bmp",theme.image);
+  assoc(dict,theme,"gif","Image","image/gif",theme.image);
+  assoc(dict,theme,"ico","Icon","image/x-ico",theme.image);
+  assoc(dict,theme,"jpeg","Image","image/jpeg",theme.image);
+  assoc(dict,theme,"jpg","Image","image/jpg",theme.image);
+  assoc(dict,theme,"pcx","Image","image/x-pcx",theme.image);
+  assoc(dict,theme,"png","Image","image/png",theme.image);
+  assoc(dict,theme,"rgb","Image","image/x-rgb",theme.image);
+  assoc(dict,theme,"tga","Image","image/x-targa",theme.image);
+  assoc(dict,theme,"tiff","Image","image/tiff",theme.image);
+  assoc(dict,theme,"xbm","Image","image/x-xbm",theme.image);
+
+  /// Video Files
+  assoc(dict,theme,"avi","Video","video/avi",theme.video);
+  assoc(dict,theme,"qt","Video","video/quicktime",theme.video);
+  assoc(dict,theme,"mov","Video","video/quicktime",theme.video);
+  assoc(dict,theme,"mpg","Video","video/mpeg",theme.video);
+  assoc(dict,theme,"mpeg","Video","video/mpeg",theme.video);
+  assoc(dict,theme,"m4v","Video","video/mp4",theme.video);
+  assoc(dict,theme,"wmv","Video","video/wmv",theme.video);
+
+  /// Office Documents
+  assoc(dict,theme,"doc","Word Document","application/vnd.ms-word",theme.document);
+  assoc(dict,theme,"pdf","PDF Document","application/pdf",theme.document);
+  assoc(dict,theme,"ps","Post Script Document","application/ps",theme.document);
+  assoc(dict,theme,"wpd","Word Perfect Document","application/wordperfect",theme.document);
+  assoc(dict,theme,"sxw","Open Office Text","application/vnd.sun.xml.write",theme.document);
+  assoc(dict,theme,"odt","Open Document Text","application/vnd.oasis.opendocument.text",theme.document);
+
+  /// Office Spreadsheet
+  assoc(dict,theme,"xls","Excel Spreadsheet","application/vnd.ms-excel",theme.spreadsheet);
+  assoc(dict,theme,"sxc","Open Office Spreadsheet","application/vnd.sun.xml.calc",theme.spreadsheet);
+  assoc(dict,theme,"ods","Open Document Spreadsheet","application/vnd.oasis.opendocument.spreadsheet",theme.spreadsheet);
+
+  /// Office Presentation
+  assoc(dict,theme,"ppt","PowerPoint Presentation","application/vnd.ms-powerpoint",theme.presentation);
+  assoc(dict,theme,"sxi","Open Office Presentation","application/vnd.sun.xml.impress",theme.spreadsheet);
+  assoc(dict,theme,"otp","Open Document Presentation","application/vnd.oasis.opendocument.presentation",theme.spreadsheet);
+
+
+  /// Text Files
+  assoc(dict,theme,"readme","Read Me","text/plain",theme.text);
+
+
+README="adie;ReadMe File;big/info.png;small/info.png;text/plain"
+INSTALL="adie;Installation Instructions;big/info.png;small/info.png;text/plain"
+AUTHORS="adie;Author Information;big/info.png;small/info.png;text/plain"
+LICENSE="adie;License Information;big/info.png;small/info.png;text/plain"
+
+  /// Internet Related
+  assoc(dict,theme,"html","HTML Document","text/html",theme.www);
+  assoc(dict,theme,"htm","HTML Document","text/html",theme.www);
+
   }
+
+
 
 
 
@@ -229,7 +522,10 @@ void FXFileApplication::init(int& argc,char** argv,FXbool connect){
   diropenmode     = (FXOpenMode) reg().readUIntEntry("settings","directory-open-mode",OPEN_IN_CURRENT);
 #endif
 
-  
+  for (FXint i=1;i<ARRAYNUMBER(iconthemes);i++){
+    if (FXStat::exists(FXString(iconthemes[i].iconpath)+PATHSEPSTRING+FXString(iconthemes[i].big)+FXString(iconthemes[i].folder)))
+      iconthemes[i].available=true;
+    } 
   //initAssociations(associations,iconthemes[2]);
   }
 
@@ -673,7 +969,7 @@ long FXFileApplication::onCmdIconTheme(FXObject*,FXSelector sel,void*){
 
 
 long FXFileApplication::onUpdIconTheme(FXObject*sender,FXSelector sel,void*){
-  if ((FXSELID(sel)-ID_ICON_THEME_1) >= ARRAYNUMBER(iconthemes))
+  if ((FXSELID(sel)-ID_ICON_THEME_1) >= ARRAYNUMBER(iconthemes) || !iconthemes[FXSELID(sel)-ID_ICON_THEME_1].available)
     sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_HIDE),NULL);
   else {
     sender->handle(this,FXSEL(SEL_COMMAND,FXWindow::ID_SHOW),NULL);
